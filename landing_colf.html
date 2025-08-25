@@ -2,127 +2,108 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestione Colf a Ore</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Gestione Colf a Ore</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f8f9fa; }
+    header, section, footer { padding: 20px; }
+    header { background: #ffffff; text-align: center; }
+    header h1 { font-size: 2em; margin-bottom: 10px; }
+    header p { font-size: 1.2em; color: #555; }
+    .btn { display: inline-block; margin: 10px; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+    .btn-outline { background: white; color: #007bff; border: 2px solid #007bff; }
+    section { background: white; margin: 20px auto; max-width: 800px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+    h2 { text-align: center; margin-top: 0; }
+    input[type="number"], input[type="email"] { width: 100%; padding: 10px; margin: 5px 0 15px; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .result { background: #f1f1f1; padding: 15px; border-radius: 5px; margin-top: 20px; }
+    footer { background: #343a40; color: white; text-align: center; }
+    .form-check { margin-bottom: 10px; }
+  </style>
 </head>
 <body>
 
-<!-- Hero Section -->
-<section class="bg-light text-center py-5">
-    <div class="container">
-        <h1 class="display-4 fw-bold">Gestire una colf a ore non è mai stato così semplice</h1>
-        <p class="lead mt-3">Tu decidi quanto vuoi dare in mano alla tua colf. Al resto pensiamo noi.</p>
-        <a href="#calcolatore" class="btn btn-primary btn-lg mt-4">Calcola ora</a>
-        <a href="#iscrizione" class="btn btn-outline-secondary btn-lg mt-4 ms-2">Iscriviti per l'accesso anticipato</a>
-    </div>
+<header>
+  <h1>Gestione Colf a Ore</h1>
+  <p>Tu decidi quanto vuoi dare in mano alla tua colf. Al resto pensiamo noi.</p>
+  <a href="#calcolatore" class="btn">Calcola ora</a>
+  <a href="#iscrizione" class="btn btn-outline">Iscriviti per l'accesso anticipato</a>
+</header>
+
+<section id="calcolatore">
+  <h2>Simulatore Retribuzione Colf</h2>
+  <p>Seleziona una modalità e inserisci il valore desiderato:</p>
+
+  <div>
+    <label><input type="radio" name="mode" value="netto" checked> Modalità 1: Netto desiderato dal collaboratore</label><br>
+    <label><input type="radio" name="mode" value="budget"> Modalità 2: Investimento massimo del datore</label>
+  </div>
+
+  <div>
+    <label for="input-value">€ per ora:</label>
+    <input type="number" id="input-value" min="0" step="0.01">
+  </div>
+
+  <button onclick="calcola()">Calcola</button>
+
+  <div id="risultato" class="result">
+    <strong>Riepilogo:</strong>
+    <p id="lordo">Lordo stimato: € -</p>
+    <p id="inps">Contributi INPS: € -</p>
+    <p id="irpef">IRPEF stimata: € -</p>
+    <p id="totale">Costo totale per il datore: € -</p>
+  </div>
 </section>
 
-<!-- Calcolatore -->
-<section id="calcolatore" class="py-5 bg-white">
-    <div class="container">
-        <h2 class="text-center mb-4">Simula il tuo scenario</h2>
-        <div class="row">
-            <div class="col-md-6">
-                <h5>Modalità A: Netto desiderato</h5>
-                <input type="number" class="form-control mb-2" placeholder="€ netto orario">
-                <button class="btn btn-outline-primary w-100">Calcola</button>
-            </div>
-            <div class="col-md-6">
-                <h5>Modalità B: Budget massimo datore</h5>
-                <input type="number" class="form-control mb-2" placeholder="€ massimo orario">
-                <button class="btn btn-outline-primary w-100">Calcola</button>
-            </div>
-        </div>
-        <div class="mt-4 text-center">
-            <p><strong>Risultato:</strong></p>
-            <p>Lordo stimato: €X | Contributi INPS: €Y | IRPEF: €Z | Costo totale: €W</p>
-        </div>
+<section id="iscrizione">
+  <h2>Vuoi provarla in anteprima?</h2>
+  <form action="https://YOUR_DC.api.mailchimp.com/subscribe/post?u=YOUR_U_ID&amp;id=YOUR_ID" method="post" target="_blank">
+    <input type="email" name="EMAIL" placeholder="Inserisci la tua email" required>
+    <div class="form-check">
+      <label><input type="checkbox" name="ACCESSO" value="1"> Voglio ricevere l'accesso anticipato</label>
     </div>
+    <button type="submit">Invia</button>
+  </form>
 </section>
 
-<!-- Perché è difficile oggi -->
-<section class="bg-light py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">Oggi è un labirinto fiscale</h2>
-        <div class="row text-center">
-            <div class="col-md-4">
-                <p>Calcolo del lordo</p>
-            </div>
-            <div class="col-md-4">
-                <p>Contributi INPS da versare</p>
-            </div>
-            <div class="col-md-4">
-                <p>IRPEF da stimare e CUA da compilare</p>
-            </div>
-        </div>
-        <div class="text-center mt-4">
-            <p class="fw-bold">Con noi: decidi solo il netto</p>
-        </div>
-    </div>
-</section>
-
-<!-- Come funziona -->
-<section class="py-5 bg-white">
-    <div class="container">
-        <h2 class="text-center mb-4">Come funziona</h2>
-        <div class="row text-center">
-            <div class="col-md-3">1. Inserisci i dati del collaboratore</div>
-            <div class="col-md-3">2. Scegli la modalità di retribuzione</div>
-            <div class="col-md-3">3. Traccia le ore lavorate</div>
-            <div class="col-md-3">4. Ottieni busta paga e CUA (PDF premium)</div>
-        </div>
-    </div>
-</section>
-
-<!-- Testimonianze -->
-<section class="bg-light py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">Cosa dicono i primi utenti</h2>
-        <div class="row">
-            <div class="col-md-6">
-                <blockquote class="blockquote">
-                    <p>"Finalmente posso sapere quanto mi costa davvero una colf."</p>
-                    <footer class="blockquote-footer">Chiara, mamma di due</footer>
-                </blockquote>
-            </div>
-            <div class="col-md-6">
-                <blockquote class="blockquote">
-                    <p>"Ho evitato il CAF per la CUA. Tutto in un click."</p>
-                    <footer class="blockquote-footer">Marco, impiegato</footer>
-                </blockquote>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Iscrizione -->
-<section id="iscrizione" class="py-5 bg-white">
-    <div class="container text-center">
-        <h2 class="mb-4">Vuoi provarla in anteprima?</h2>
-        <form class="row justify-content-center">
-            <div class="col-md-6">
-                <input type="email" class="form-control mb-2" placeholder="Inserisci la tua email">
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" id="accesso">
-                    <label class="form-check-label" for="accesso">Voglio ricevere l'accesso anticipato</label>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Invia</button>
-            </div>
-        </form>
-    </div>
-</section>
-
-<!-- Footer -->
-<footer class="bg-dark text-white text-center py-3">
-    <div class="container">
-        <p>© 2025 App Colf a Ore</p>
-        <a href="#" class="text-white me-3">Privacy</a>
-        <a href="#" class="text-white me-3">Termini d’uso</a>
-        <a href="#" class="text-white">Contatti</a>
-    </div>
+<footer>
+  <p>© 2025 App Colf a Ore</p>
+  <a href="#" style="color:white; margin-right:10px;">Privacy</a>
+  <a href="#" style="color:white; margin-right:10px;">Termini d’uso</a>
+  <a href="#" style="color:white;">Contatti</a>
 </footer>
+
+<script>
+function calcola() {
+  var mode = document.querySelector('input[name="mode"]:checked').value;
+  var value = parseFloat(document.getElementById("input-value").value);
+  if (isNaN(value) || value <= 0) {
+    alert("Inserisci un valore valido.");
+    return;
+  }
+
+  var lordo, inps, irpef, totale;
+
+  if (mode === "netto") {
+    lordo = (value + 1.45) / 0.9;
+    inps = 1.45;
+    irpef = lordo * 0.10;
+    totale = lordo + inps;
+  } else {
+    lordo = (value - 1.45);
+    irpef = lordo * 0.10;
+    inps = 1.45;
+    totale = value;
+    value = lordo - irpef;
+  }
+
+  document.getElementById("lordo").innerText = "Lordo stimato: € " + lordo.toFixed(2);
+  document.getElementById("inps").innerText = "Contributi INPS: € " + inps.toFixed(2);
+  document.getElementById("irpef").innerText = "IRPEF stimata: € " + irpef.toFixed(2);
+  document.getElementById("totale").innerText = "Costo totale per il datore: € " + totale.toFixed(2);
+}
+</script>
 
 </body>
 </html>
