@@ -12,14 +12,22 @@
   <style>
     body { background: #f8f9fa; }
     .nav-link { font-weight: 500; }
+    .card-header { font-weight: 600; }
   </style>
 </head>
-<body class="c-app flex-row align-items-center bg-light">
+<body class="c-app bg-light">
 
   <div class="container py-3">
+
+    <!-- NAV TABS -->
     <ul class="nav nav-pills nav-justified mb-3" id="appTabs" role="tablist">
       <li class="nav-item">
-        <a class="nav-link active" id="colf-tab" data-coreui-toggle="tab" href="#colf" role="tab">
+        <a class="nav-link active" id="dashboard-tab" data-coreui-toggle="tab" href="#dashboard" role="tab">
+          <i class="fas fa-home"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="colf-tab" data-coreui-toggle="tab" href="#colf" role="tab">
           <i class="fas fa-user-friends"></i> Colf
         </a>
       </li>
@@ -37,8 +45,65 @@
 
     <div class="tab-content" id="appTabsContent">
 
+      <!-- DASHBOARD -->
+      <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+        <div class="row g-3">
+
+          <div class="col-6">
+            <div class="card text-white bg-primary">
+              <div class="card-body text-center">
+                <i class="fas fa-user-friends fa-2x mb-2"></i>
+                <h5>Colf</h5>
+                <p class="fs-4 fw-bold">12</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="card text-white bg-success">
+              <div class="card-body text-center">
+                <i class="fas fa-user-tie fa-2x mb-2"></i>
+                <h5>Datori</h5>
+                <p class="fs-4 fw-bold">5</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="card text-white bg-warning">
+              <div class="card-body text-center">
+                <i class="fas fa-file-alt fa-2x mb-2"></i>
+                <h5>CU</h5>
+                <p class="fs-4 fw-bold">7</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="card text-white bg-dark">
+              <div class="card-body text-center">
+                <i class="fas fa-calendar fa-2x mb-2"></i>
+                <h5>Anno</h5>
+                <p class="fs-4 fw-bold">2025</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- LISTA RAPIDA -->
+        <div class="card mt-3 shadow-sm">
+          <div class="card-header">Ultimi inserimenti</div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><i class="fas fa-user-friends text-primary me-2"></i> Maria Rossi (Colf)</li>
+            <li class="list-group-item"><i class="fas fa-user-tie text-success me-2"></i> Luigi Bianchi (Datore)</li>
+            <li class="list-group-item"><i class="fas fa-file-alt text-warning me-2"></i> CU 2024 - Rossi</li>
+          </ul>
+        </div>
+      </div>
+
       <!-- REGISTRAZIONE COLF -->
-      <div class="tab-pane fade show active" id="colf" role="tabpanel">
+      <div class="tab-pane fade" id="colf" role="tabpanel">
         <div class="card shadow-sm">
           <div class="card-header bg-primary text-white">Registrazione Colf</div>
           <div class="card-body">
