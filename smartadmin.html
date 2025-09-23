@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Colf Manager - SmartAdmin Demo</title>
+
+  <!-- SmartAdmin Core CSS (jQuery version) -->
+  <link href="https://cdn.jsdelivr.net/gh/myorange/Smart-Admin-BS4/css/app.bundle.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/myorange/Smart-Admin-BS4/css/vendors.bundle.css" rel="stylesheet">
+</head>
+<body class="mod-bg-1">
+
+  <!-- Sidebar -->
+  <aside class="page-sidebar">
+    <div class="page-logo">
+      <span class="page-logo-text mr-1">Colf Manager</span>
+    </div>
+    <nav class="primary-nav">
+      <ul class="nav-menu">
+        <li><a href="#"><i class="fal fa-home"></i> Dashboard</a></li>
+        <li><a href="#"><i class="fal fa-user-friends"></i> Colf</a></li>
+        <li><a href="#"><i class="fal fa-user-tie"></i> Datori</a></li>
+        <li><a href="#"><i class="fal fa-file-alt"></i> Certificazione Unica</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Page content -->
+  <main id="js-page-content" role="main" class="page-content">
+    <div class="subheader">
+      <h1 class="subheader-title">Dashboard</h1>
+    </div>
+
+    <!-- DASHBOARD CARDS -->
+    <div class="row">
+      <div class="col-sm-6 col-lg-3">
+        <div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-3">
+          <h3 class="display-4">12</h3>
+          <p class="m-0">Colf registrati</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="p-3 bg-success-300 rounded text-white mb-3">
+          <h3 class="display-4">5</h3>
+          <p class="m-0">Datori attivi</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="p-3 bg-warning-300 rounded text-white mb-3">
+          <h3 class="display-4">3</h3>
+          <p class="m-0">CU da generare</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM REGISTRAZIONE COLF -->
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        <h5><i class="fal fa-user-plus mr-2"></i>Registrazione Colf</h5>
+      </div>
+      <div class="card-body">
+        <form id="form-colf">
+          <div class="form-group">
+            <label>Nome</label>
+            <input type="text" class="form-control" placeholder="Inserisci nome">
+          </div>
+          <div class="form-group">
+            <label>Cognome</label>
+            <input type="text" class="form-control" placeholder="Inserisci cognome">
+          </div>
+          <div class="form-group">
+            <label>Codice Fiscale</label>
+            <input type="text" class="form-control" placeholder="Codice Fiscale">
+          </div>
+          <div class="form-group">
+            <label>Telefono</label>
+            <input type="tel" class="form-control" placeholder="+39 ...">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block mt-3">Salva</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- WIZARD CERTIFICAZIONE UNICA -->
+    <div class="card">
+      <div class="card-header bg-info text-white">
+        <h5><i class="fal fa-file-alt mr-2"></i>Genera Certificazione Unica</h5>
+      </div>
+      <div class="card-body">
+        <div id="smartwizard">
+          <ul class="nav">
+            <li><a class="nav-link" href="#step-1">1<br /><small>Dati Datore</small></a></li>
+            <li><a class="nav-link" href="#step-2">2<br /><small>Dati Colf</small></a></li>
+            <li><a class="nav-link" href="#step-3">3<br /><small>Retribuzioni</small></a></li>
+            <li><a class="nav-link" href="#step-4">4<br /><small>Conferma</small></a></li>
+          </ul>
+          <div class="tab-content">
+            <div id="step-1" class="tab-pane" role="tabpanel">
+              <div class="form-group">
+                <label>Codice Fiscale Datore</label>
+                <input type="text" class="form-control">
+              </div>
+            </div>
+            <div id="step-2" class="tab-pane" role="tabpanel">
+              <div class="form-group">
+                <label>Codice Fiscale Colf</label>
+                <input type="text" class="form-control">
+              </div>
+            </div>
+            <div id="step-3" class="tab-pane" role="tabpanel">
+              <div class="form-group">
+                <label>Retribuzione Annuale (€)</label>
+                <input type="number" class="form-control">
+              </div>
+            </div>
+            <div id="step-4" class="tab-pane" role="tabpanel">
+              <p>Conferma i dati e genera la CU</p>
+              <button class="btn btn-success">Genera PDF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/gh/myorange/Smart-Admin-BS4/js/vendors.bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/myorange/Smart-Admin-BS4/js/app.bundle.js"></script>
+  <script>
+    // Init wizard
+    $('#smartwizard').smartWizard({
+      theme: 'dots',
+      autoAdjustHeight: true,
+      transition: { animation: 'slide-horizontal' }
+    });
+  </script>
+</body>
+</html>
