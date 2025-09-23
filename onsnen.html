@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Colf Manager - Onsen UI</title>
+  <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+  <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+</head>
+<body>
+
+<!-- Login Page -->
+<ons-page id="login-page">
+  <div class="container-tight py-4">
+    <div class="text-center mb-4">
+      <h2>Colf Manager</h2>
+    </div>
+    <ons-card>
+      <div class="card-body">
+        <h2 class="card-title text-center mb-4">Accedi</h2>
+        <div class="mb-3">
+          <label>Email</label>
+          <ons-input id="login-email" type="email" placeholder="name@example.com"></ons-input>
+        </div>
+        <div class="mb-3">
+          <label>Password</label>
+          <ons-input id="login-password" type="password" placeholder="Password"></ons-input>
+        </div>
+        <div class="form-footer">
+          <ons-button id="login-btn">Login</ons-button>
+        </div>
+      </div>
+    </ons-card>
+  </div>
+</ons-page>
+
+<!-- Dashboard with Tabbar -->
+<ons-tabbar id="dashboard-tabbar" position="bottom" style="display:none;">
+  <ons-tab label="🏠 Home" icon="md-home" page="home.html" active></ons-tab>
+  <ons-tab label="👩‍🦱 Colf" icon="md-face" page="colf.html"></ons-tab>
+  <ons-tab label="👤 Datore" icon="md-person" page="datore.html"></ons-tab>
+  <ons-tab label="📄 CU" icon="md-document" page="cu.html"></ons-tab>
+</ons-tabbar>
+
+<!-- Tab Templates -->
+<template id="home.html">
+  <ons-page>
+    <ons-card>
+      <div class="card-header"><h3 class="card-title">Dashboard</h3></div>
+      <div class="card-body">
+        <p>Benvenuto 👋</p>
+        <p>Da qui puoi gestire colf, datori e generare CU.</p>
+      </div>
+    </ons-card>
+  </ons-page>
+</template>
+
+<template id="colf.html">
+  <ons-page>
+    <ons-card>
+      <div class="card-header"><h3 class="card-title">Registrazione Colf</h3></div>
+      <div class="card-body">
+        <form>
+          <div class="mb-3"><label>Nome</label><input class="form-control" type="text"></div>
+          <div class="mb-3"><label>Cognome</label><input class="form-control" type="text"></div>
+          <div class="mb-3"><label>Codice Fiscale</label><input class="form-control" type="text"></div>
+          <div class="mb-3"><label>Telefono</label><input class="form-control" type="tel"></div>
+          <ons-button type="submit">Salva</ons-button>
+        </form>
+      </div>
+    </ons-card>
+  </ons-page>
+</template>
+
+<template id="datore.html">
+  <ons-page>
+    <ons-card>
+      <div class="card-header"><h3 class="card-title">Registrazione Datore</h3></div>
+      <div class="card-body">
+        <form>
+          <div class="mb-3"><label>Nome</label><input class="form-control" type="text"></div>
+          <div class="mb-3"><label>Cognome</label><input class="form-control" type="text"></div>
+          <div class="mb-3"><label>Codice Fiscale / P.IVA</label><input class="form-control" type="text"></div>
+          <div class="mb-3"><label>Indirizzo</label><input class="form-control" type="text"></div>
+          <ons-button type="submit">Salva</ons-button>
+        </form>
+      </div>
+    </ons-card>
+  </ons-page>
+</template>
+
+<template id="cu.html">
+  <ons-page>
+    <ons-card>
+      <div class="card-header"><h3 class="card-title">Generazione CU</h3></div>
+      <div class="card-body">
+        <form>
+          <div class="mb-3"><label>Anno</label><input class="form-control" type="number" value="2024"></div>
+          <div class="mb-3"><label>Colf</label><select class="form-select"><option>Mario Rossi</option></select></div>
+          <div class="mb-3"><label>Datore</label><select class="form-select"><option>Giulia Bianchi</option></select></div>
+          <div class="mb-3"><label>Compenso lordo</label><input class="form-control" type="number"></div>
+          <div class="mb-3"><label>Ritenute</label><input class="form-control" type="number"></div>
+          <ons-button type="submit">Genera PDF</ons-button>
+        </form>
+      </div>
+    </ons-card>
+  </ons-page>
+</template>
+
+<script>
+$(function() {
+  // Login button click
+  $('#login-btn').on('click', function() {
+    const email = $('#login-email').val();
+    const pass = $('#login-password').val();
+
+    if(email === 'name@example.com' && pass === 'password') {
+      $('#login-page').hide();
+      $('#dashboard-tabbar').show();
+    } else {
+      ons.notification.alert('Credenziali non valide');
+    }
+  });
+
+  // Optional: handle tabbar postchange event
+  $('#dashboard-tabbar').on('postchange', function(event) {
+    console.log('Tab changed to index:', event.index);
+  });
+});
+</script>
+</body>
+</html>
