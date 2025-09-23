@@ -40,7 +40,7 @@
       <form id="login-form">
         <ons-input id="login-email" modifier="underbar" type="email" float placeholder="Email"></ons-input>
         <ons-input id="login-password" modifier="underbar" type="password" float placeholder="Password"></ons-input>
-        <ons-button type="submit" modifier="large" style="margin-top:16px; width:100%;">Login</ons-button>
+        <ons-button type="submit" modifier="large" style="margin-top:16px; width:100%;" onclick="$(this).closest('form').submit()>Login</ons-button>
       </form>
     </div>
   </ons-page>
