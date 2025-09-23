@@ -2,135 +2,168 @@
 <html lang="it">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-  <title>Colf Manager - Onsen Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Colf Manager - Onsen UI (jQuery)</title>
 
   <!-- Onsen UI -->
   <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
   <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+
+  <!-- jQuery (must be before our logic) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
 
   <style>
+    /* Card style + readable inputs */
     .form-card {
       margin: 16px;
       padding: 16px;
-      border-radius: 8px;
+      border-radius: 10px;
       background: #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     }
+
     ons-input, ons-select {
       display: block;
-      margin: 12px 0;
+      margin-top: 12px;
+      width: 100%;
     }
+
+    /* force readable input colors (avoid white-on-white issues) */
     ons-input input, ons-select select {
       background-color: #fff !important;
-      color: #000 !important;
+      color: #111 !important;
     }
     ons-input input::placeholder {
-      color: #888 !important;
+      color: #8b8b8b !important;
     }
+
+    /* Slight spacing for lists */
+    ons-list { margin-top: 8px; }
   </style>
 </head>
 <body>
 
-<ons-navigator id="appNavigator" page="login-page"></ons-navigator>
+<ons-navigator id="appNavigator"></ons-navigator>
 
-<!-- LOGIN -->
+<!-- TEMPLATES -->
+
 <template id="login-page">
-  <ons-page>
+  <ons-page id="login-page">
+    <ons-toolbar>
+      <div class="center">Colf Manager</div>
+    </ons-toolbar>
+
     <div class="form-card">
-      <h2 style="text-align:center;">Colf Manager</h2>
+      <h2 style="text-align:center; margin: 8px 0 12px;">Accedi</h2>
+
       <form id="login-form">
-        <ons-input modifier="underbar" type="email" id="login-email" float placeholder="Email"></ons-input>
-        <ons-input modifier="underbar" type="password" id="login-password" float placeholder="Password"></ons-input>
-        <ons-button modifier="large" style="margin-top:20px; width:100%;" type="submit">Login</ons-button>
+        <ons-input id="login-email" modifier="underbar" type="email" float placeholder="Email"></ons-input>
+        <ons-input id="login-password" modifier="underbar" type="password" float placeholder="Password"></ons-input>
+
+        <ons-button type="submit" modifier="large" style="margin-top:18px; width:100%;">Login</ons-button>
       </form>
     </div>
-    <script>
-      document.querySelector('#login-form').addEventListener('submit', function(e){
-        e.preventDefault();
-        const email = document.querySelector('#login-email').value;
-        const pass = document.querySelector('#login-password').value;
-        if(email === "name@example.com" && pass === "password"){
-          document.querySelector('#appNavigator').pushPage('dashboard-page');
-        } else {
-          ons.notification.alert('Credenziali non valide');
-        }
-      });
-    </script>
   </ons-page>
 </template>
 
-<!-- DASHBOARD -->
 <template id="dashboard-page">
-  <ons-page>
+  <ons-page id="dashboard-page">
     <ons-toolbar>
       <div class="center">Dashboard</div>
     </ons-toolbar>
 
-    <ons-card>
+    <ons-card style="margin:16px;">
       <h3>Benvenuto 👋</h3>
       <p>Da qui puoi gestire colf, datori e generare CU.</p>
     </ons-card>
 
     <ons-list-title>Azioni</ons-list-title>
     <ons-list>
-      <ons-list-item tappable onclick="appNavigator.pushPage('colf-page')">
-        👩‍🦱 Registrazione Colf
-      </ons-list-item>
-      <ons-list-item tappable onclick="appNavigator.pushPage('datore-page')">
-        👤 Registrazione Datore
-      </ons-list-item>
-      <ons-list-item tappable onclick="appNavigator.pushPage('cu-page')">
-        📄 Generazione CU
-      </ons-list-item>
+      <ons-list-item tappable modifier="chevron" data-target="colf-list-page">👩‍🦱 Registrazione & Lista Colf</ons-list-item>
+      <ons-list-item tappable modifier="chevron" data-target="datore-list-page">👤 Registrazione & Lista Datori</ons-list-item>
+      <ons-list-item tappable modifier="chevron" data-target="cu-page">📄 Generazione CU</ons-list-item>
     </ons-list>
+
+    <ons-bottom-toolbar>
+      <div class="center">
+        <ons-button id="logout-btn" modifier="quiet">Logout</ons-button>
+      </div>
+    </ons-bottom-toolbar>
   </ons-page>
 </template>
 
-<!-- COLF -->
-<template id="colf-page">
-  <ons-page>
+<template id="colf-list-page">
+  <ons-page id="colf-list-page">
     <ons-toolbar>
       <div class="left"><ons-back-button>Dashboard</ons-back-button></div>
-      <div class="center">Registrazione Colf</div>
+      <div class="center">Colf</div>
+      <div class="right">
+        <ons-toolbar-button id="add-colf-btn">Aggiungi</ons-toolbar-button>
+      </div>
+    </ons-toolbar>
+
+    <ons-list id="colf-list"></ons-list>
+  </ons-page>
+</template>
+
+<template id="datore-list-page">
+  <ons-page id="datore-list-page">
+    <ons-toolbar>
+      <div class="left"><ons-back-button>Dashboard</ons-back-button></div>
+      <div class="center">Datori</div>
+      <div class="right">
+        <ons-toolbar-button id="add-datore-btn">Aggiungi</ons-toolbar-button>
+      </div>
+    </ons-toolbar>
+
+    <ons-list id="datore-list"></ons-list>
+  </ons-page>
+</template>
+
+<template id="colf-form-page">
+  <ons-page id="colf-form-page">
+    <ons-toolbar>
+      <div class="left"><ons-back-button>Colf</ons-back-button></div>
+      <div class="center">Nuovo Colf</div>
     </ons-toolbar>
 
     <div class="form-card">
-      <form>
-        <ons-input modifier="underbar" float placeholder="Nome"></ons-input>
-        <ons-input modifier="underbar" float placeholder="Cognome"></ons-input>
-        <ons-input modifier="underbar" float placeholder="Codice Fiscale"></ons-input>
-        <ons-input modifier="underbar" type="tel" float placeholder="Telefono"></ons-input>
-        <ons-button modifier="large" style="margin-top:20px; width:100%;">Salva</ons-button>
+      <form id="colf-form">
+        <ons-input id="colf-nome" modifier="underbar" float placeholder="Nome"></ons-input>
+        <ons-input id="colf-cognome" modifier="underbar" float placeholder="Cognome"></ons-input>
+        <ons-input id="colf-cf" modifier="underbar" float placeholder="Codice Fiscale"></ons-input>
+        <ons-input id="colf-tel" modifier="underbar" type="tel" float placeholder="Telefono"></ons-input>
+
+        <ons-button type="submit" modifier="large" style="margin-top:16px; width:100%;">Salva</ons-button>
       </form>
     </div>
   </ons-page>
 </template>
 
-<!-- DATORE -->
-<template id="datore-page">
-  <ons-page>
+<template id="datore-form-page">
+  <ons-page id="datore-form-page">
     <ons-toolbar>
-      <div class="left"><ons-back-button>Dashboard</ons-back-button></div>
-      <div class="center">Registrazione Datore</div>
+      <div class="left"><ons-back-button>Datori</ons-back-button></div>
+      <div class="center">Nuovo Datore</div>
     </ons-toolbar>
 
     <div class="form-card">
-      <form>
-        <ons-input modifier="underbar" float placeholder="Nome"></ons-input>
-        <ons-input modifier="underbar" float placeholder="Cognome"></ons-input>
-        <ons-input modifier="underbar" float placeholder="Codice Fiscale / P.IVA"></ons-input>
-        <ons-input modifier="underbar" float placeholder="Indirizzo"></ons-input>
-        <ons-button modifier="large" style="margin-top:20px; width:100%;">Salva</ons-button>
+      <form id="datore-form">
+        <ons-input id="datore-nome" modifier="underbar" float placeholder="Nome"></ons-input>
+        <ons-input id="datore-cognome" modifier="underbar" float placeholder="Cognome"></ons-input>
+        <ons-input id="datore-azienda" modifier="underbar" float placeholder="Azienda / Ragione Sociale (opzionale)"></ons-input>
+        <ons-input id="datore-piva" modifier="underbar" float placeholder="Partita IVA"></ons-input>
+        <ons-input id="datore-tel" modifier="underbar" type="tel" float placeholder="Telefono"></ons-input>
+
+        <ons-button type="submit" modifier="large" style="margin-top:16px; width:100%;">Salva</ons-button>
       </form>
     </div>
   </ons-page>
 </template>
 
-<!-- CU -->
 <template id="cu-page">
-  <ons-page>
+  <ons-page id="cu-page">
     <ons-toolbar>
       <div class="left"><ons-back-button>Dashboard</ons-back-button></div>
       <div class="center">Generazione CU</div>
@@ -138,28 +171,201 @@
 
     <div class="form-card">
       <form id="cu-form">
-        <ons-input modifier="underbar" type="number" value="2024" float placeholder="Anno"></ons-input>
+        <ons-input id="cu-anno" modifier="underbar" type="number" float placeholder="Anno" value="2024"></ons-input>
 
-        <ons-select modifier="underbar">
-          <option value="" disabled selected>Colf</option>
-          <option>Mario Rossi</option>
-          <option>Lucia Verdi</option>
-        </ons-select>
+        <ons-select id="cu-colf" modifier="underbar"></ons-select>
+        <ons-select id="cu-datore" modifier="underbar"></ons-select>
 
-        <ons-select modifier="underbar">
-          <option value="" disabled selected>Datore</option>
-          <option>Giulia Bianchi</option>
-          <option>Andrea Neri</option>
-        </ons-select>
+        <ons-input id="cu-compenso" modifier="underbar" type="number" float placeholder="Compenso lordo"></ons-input>
+        <ons-input id="cu-ritenute" modifier="underbar" type="number" float placeholder="Ritenute"></ons-input>
 
-        <ons-input modifier="underbar" type="number" float placeholder="Compenso lordo"></ons-input>
-        <ons-input modifier="underbar" type="number" float placeholder="Ritenute"></ons-input>
-
-        <ons-button modifier="large" style="margin-top:20px; width:100%;">Genera PDF</ons-button>
+        <ons-button type="submit" modifier="large" style="margin-top:16px; width:100%;">Genera PDF</ons-button>
       </form>
     </div>
   </ons-page>
 </template>
+
+<script>
+  $(function() {
+    const appNavigator = document.getElementById('appNavigator');
+
+    // initial page: login
+    appNavigator.pushPage('login-page');
+
+    // Mock storage (simple arrays)
+    const colf = [
+      { nome: 'Mario', cognome: 'Rossi', cf: 'RSSMRA80A01H501U', tel: '3331112222' },
+      { nome: 'Laura', cognome: 'Verdi', cf: 'VRDLRA85B02L219A', tel: '3332223333' }
+    ];
+    const datori = [
+      { nome: 'Giulia', cognome: 'Bianchi', azienda: '', piva: '01234567890', tel: '333444555' },
+      { nome: 'Paolo', cognome: 'Neri', azienda: '', piva: '09876543210', tel: '333555666' }
+    ];
+
+    // utility: full name
+    function fullName(o) {
+      return (o.nome || '') + (o.cognome ? ' ' + o.cognome : '');
+    }
+
+    // update lists & selects
+    function updateLists() {
+      // Colf list
+      const $colfList = $('#colf-list');
+      $colfList.empty();
+      colf.forEach((c, i) => {
+        $colfList.append(`<ons-list-item tappable modifier="chevron" data-index="${i}">${fullName(c)}</ons-list-item>`);
+      });
+
+      // Datori list
+      const $datoreList = $('#datore-list');
+      $datoreList.empty();
+      datori.forEach((d, i) => {
+        $datoreList.append(`<ons-list-item tappable modifier="chevron" data-index="${i}">${fullName(d)}</ons-list-item>`);
+      });
+
+      // CU selects
+      const $cuColf = $('#cu-colf');
+      const $cuDatore = $('#cu-datore');
+      if ($cuColf.length) {
+        $cuColf.empty();
+        $cuColf.append('<option value="" disabled selected>Seleziona Colf</option>');
+        colf.forEach((c, i) => $cuColf.append(`<option value="${i}">${fullName(c)}</option>`));
+      }
+      if ($cuDatore.length) {
+        $cuDatore.empty();
+        $cuDatore.append('<option value="" disabled selected>Seleziona Datore</option>');
+        datori.forEach((d, i) => $cuDatore.append(`<option value="${i}">${fullName(d)}</option>`));
+      }
+    }
+
+    // When any page is initialized, refresh lists if needed
+    document.addEventListener('init', function(event) {
+      const page = event.target;
+      if (page.id === 'dashboard-page' || page.id === 'colf-list-page' || page.id === 'datore-list-page' || page.id === 'cu-page') {
+        updateLists();
+      }
+    });
+
+    // LOGIN submit (delegated)
+    $(document).on('submit', '#login-form', function(e) {
+      e.preventDefault();
+      const email = $('#login-email').val().trim();
+      const pass = $('#login-password').val().trim();
+      if (email === 'name@example.com' && pass === 'password') {
+        appNavigator.resetToPage('dashboard-page', { animation: 'fade' });
+      } else {
+        ons.notification.alert('Credenziali non valide');
+      }
+    });
+
+    // Dashboard list navigation (delegated)
+    $(document).on('click', 'ons-list-item[data-target]', function() {
+      const target = $(this).data('target');
+      if (target) appNavigator.pushPage(target, { animation: 'slide' });
+    });
+
+    // The dashboard items we added in template don't have data-target as attribute in markup,
+    // so use a separate handler for those list items (they have data-target on markup)
+    $(document).on('click', '#dashboard-page ons-list-item', function() {
+      const target = $(this).data('target');
+      if (target) appNavigator.pushPage(target, { animation: 'slide' });
+    });
+
+    // Alternatively handle direct elements with attribute
+    $(document).on('click', 'ons-list-item[modifier="chevron"][data-target]', function() {
+      const target = $(this).data('target');
+      if (target) appNavigator.pushPage(target, { animation: 'slide' });
+    });
+
+    // We used in the dashboard template ons-list-item with data-target attribute,
+    // but to be robust, handle clicks by reading inner text for known strings:
+    $(document).on('click', '#dashboard-page ons-list-item', function() {
+      const txt = $(this).text().trim();
+      if (txt.startsWith('👩')) appNavigator.pushPage('colf-list-page', { animation: 'slide' });
+      else if (txt.startsWith('👤')) appNavigator.pushPage('datore-list-page', { animation: 'slide' });
+      else if (txt.startsWith('📄')) appNavigator.pushPage('cu-page', { animation: 'slide' });
+    });
+
+    // Logout
+    $(document).on('click', '#logout-btn', function() {
+      appNavigator.resetToPage('login-page', { animation: 'fade' });
+    });
+
+    // Add new colf button
+    $(document).on('click', '#add-colf-btn', function() {
+      appNavigator.pushPage('colf-form-page', { animation: 'lift' });
+    });
+
+    // Add new datore button
+    $(document).on('click', '#add-datore-btn', function() {
+      appNavigator.pushPage('datore-form-page', { animation: 'lift' });
+    });
+
+    // Save colf
+    $(document).on('submit', '#colf-form', function(e) {
+      e.preventDefault();
+      const nome = $('#colf-nome').val().trim();
+      const cognome = $('#colf-cognome').val().trim();
+      const cf = $('#colf-cf').val().trim();
+      const tel = $('#colf-tel').val().trim();
+      if (!nome || !cognome) {
+        ons.notification.alert('Nome e Cognome sono obbligatori');
+        return;
+      }
+      colf.push({ nome, cognome, cf, tel });
+      ons.notification.toast('Colf salvato', { timeout: 1500 });
+      updateLists();
+      appNavigator.popPage();
+    });
+
+    // Save datore
+    $(document).on('submit', '#datore-form', function(e) {
+      e.preventDefault();
+      const nome = $('#datore-nome').val().trim();
+      const cognome = $('#datore-cognome').val().trim();
+      const azienda = $('#datore-azienda').val().trim();
+      const piva = $('#datore-piva').val().trim();
+      const tel = $('#datore-tel').val().trim();
+      if (!nome || !cognome) {
+        ons.notification.alert('Nome e Cognome sono obbligatori');
+        return;
+      }
+      datori.push({ nome, cognome, azienda, piva, tel });
+      ons.notification.toast('Datore salvato', { timeout: 1500 });
+      updateLists();
+      appNavigator.popPage();
+    });
+
+    // CU submit
+    $(document).on('submit', '#cu-form', function(e) {
+      e.preventDefault();
+      const anno = $('#cu-anno').val();
+      const colfIndex = $('#cu-colf').val();
+      const datoreIndex = $('#cu-datore').val();
+      const compenso = $('#cu-compenso').val();
+      const ritenute = $('#cu-ritenute').val();
+
+      if (!anno || colfIndex === null || colfIndex === "" || datoreIndex === null || datoreIndex === "") {
+        ons.notification.alert('Seleziona anno, colf e datore');
+        return;
+      }
+
+      const summary = `
+Anno: ${anno}
+Colf: ${fullName(colf[colfIndex])}
+Datore: ${fullName(datori[datoreIndex])}
+Compenso lordo: ${compenso || '0'}
+Ritenute: ${ritenute || '0'}`;
+
+      ons.notification.alert('CU generata (demo):\n' + summary);
+    });
+
+    // When user navigates to list pages, update lists
+    // (also called on init event above)
+    // For safety, call updateLists now in case some selects exist immediately
+    updateLists();
+  });
+</script>
 
 </body>
 </html>
