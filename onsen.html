@@ -3,133 +3,176 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Colf Manager - Onsen UI</title>
+  <title>Colf Manager - Onsen UI Native</title>
   <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
   <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+
+  <style>
+    /* Pills like native tabs */
+    #dashboard-pills {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+    #dashboard-pills .pill {
+      flex: 1 1 30%;
+      margin: 4px;
+      padding: 10px 20px;
+      border-radius: 20px;
+      background-color: #206bc4;
+      color: white;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s all;
+    }
+    #dashboard-pills .pill.active {
+      background-color: #104a8a;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+  </style>
 </head>
 <body>
 
-<!-- Login Page -->
-<ons-page id="login-page">
-  <ons-toolbar>
-    <div class="center">Colf Manager</div>
-  </ons-toolbar>
+<ons-navigator id="app-navigator" swipeable></ons-navigator>
 
-  <div style="padding: 16px;">
-    <ons-card>
-      <div style="text-align:center; margin-bottom:16px;">
-        <h2>Accedi</h2>
-      </div>
-
-      <ons-input id="login-email" modifier="underbar" placeholder="Email" type="email" float></ons-input>
-      <ons-input id="login-password" modifier="underbar" placeholder="Password" type="password" float style="margin-top:16px;"></ons-input>
-
-      <div style="margin-top:24px;">
-        <ons-button id="login-btn" modifier="large--cta">Login</ons-button>
-      </div>
-    </ons-card>
-  </div>
-</ons-page>
-
-<!-- Dashboard Tabbar -->
-<ons-tabbar id="dashboard-tabbar" position="bottom" style="display:none;">
-  <ons-tab label="🏠 Home" page="home.html" active icon="md-home"></ons-tab>
-  <ons-tab label="👩‍🦱 Colf" page="colf.html" icon="md-face"></ons-tab>
-  <ons-tab label="👤 Datore" page="datore.html" icon="md-person"></ons-tab>
-  <ons-tab label="📄 CU" page="cu.html" icon="md-document"></ons-tab>
-</ons-tabbar>
-
-<!-- Templates -->
-<template id="home.html">
+<!-- Login Page Template -->
+<template id="login-page">
   <ons-page>
     <ons-toolbar>
-      <div class="center">Home</div>
+      <div class="center">Colf Manager</div>
     </ons-toolbar>
-    <ons-card style="margin:16px;">
-      <div class="card-header"><h3 class="card-title">Dashboard</h3></div>
-      <div class="card-body">
-        <p>Benvenuto 👋</p>
-        <p>Da qui puoi gestire colf, datori e generare CU.</p>
-      </div>
-    </ons-card>
+    <div style="padding: 16px;">
+      <ons-card>
+        <ons-input id="login-email" modifier="underbar" placeholder="Email" type="email" float></ons-input>
+        <ons-input id="login-password" modifier="underbar" placeholder="Password" type="password" float style="margin-top:16px;"></ons-input>
+        <div style="margin-top:24px;">
+          <ons-button id="login-btn" modifier="large--cta">Login</ons-button>
+        </div>
+      </ons-card>
+    </div>
   </ons-page>
 </template>
 
-<template id="colf.html">
+<!-- Dashboard Page Template -->
+<template id="dashboard-page">
   <ons-page>
     <ons-toolbar>
-      <div class="center">Registrazione Colf</div>
+      <div class="center">Dashboard</div>
     </ons-toolbar>
-    <ons-card style="margin:16px;">
-      <form>
-        <ons-input placeholder="Nome" float style="margin-top:8px;"></ons-input>
-        <ons-input placeholder="Cognome" float style="margin-top:8px;"></ons-input>
-        <ons-input placeholder="Codice Fiscale" float style="margin-top:8px;"></ons-input>
-        <ons-input placeholder="Telefono" float style="margin-top:8px;"></ons-input>
-        <div style="margin-top:16px;">
-          <ons-button>Salva</ons-button>
-        </div>
-      </form>
-    </ons-card>
-  </ons-page>
-</template>
 
-<template id="datore.html">
-  <ons-page>
-    <ons-toolbar>
-      <div class="center">Registrazione Datore</div>
-    </ons-toolbar>
-    <ons-card style="margin:16px;">
-      <form>
-        <ons-input placeholder="Nome" float style="margin-top:8px;"></ons-input>
-        <ons-input placeholder="Cognome" float style="margin-top:8px;"></ons-input>
-        <ons-input placeholder="Codice Fiscale / P.IVA" float style="margin-top:8px;"></ons-input>
-        <ons-input placeholder="Indirizzo" float style="margin-top:8px;"></ons-input>
-        <div style="margin-top:16px;">
-          <ons-button>Salva</ons-button>
-        </div>
-      </form>
-    </ons-card>
-  </ons-page>
-</template>
+    <!-- Pills -->
+    <div id="dashboard-pills">
+      <div class="pill active" data-target="home-page">🏠 Home</div>
+      <div class="pill" data-target="colf-page">👩‍🦱 Colf</div>
+      <div class="pill" data-target="datore-page">👤 Datore</div>
+      <div class="pill" data-target="cu-page">📄 CU</div>
+    </div>
 
-<template id="cu.html">
-  <ons-page>
-    <ons-toolbar>
-      <div class="center">Generazione CU</div>
-    </ons-toolbar>
-    <ons-card style="margin:16px;">
-      <form>
-        <ons-input placeholder="Anno" type="number" value="2024" float></ons-input>
-        <ons-select style="margin-top:8px;">
-          <option>Mario Rossi</option>
-        </ons-select>
-        <ons-select style="margin-top:8px;">
-          <option>Giulia Bianchi</option>
-        </ons-select>
-        <ons-input placeholder="Compenso lordo" type="number" float style="margin-top:8px;"></ons-input>
-        <ons-input placeholder="Ritenute" type="number" float style="margin-top:8px;"></ons-input>
-        <div style="margin-top:16px;">
-          <ons-button modifier="large--cta">Genera PDF</ons-button>
-        </div>
-      </form>
-    </ons-card>
+    <div id="dashboard-content">
+      <div id="home-page">
+        <ons-card>
+          <div class="card-header"><h3 class="card-title">Home</h3></div>
+          <div class="card-body">
+            Benvenuto 👋<br>
+            Da qui puoi gestire colf, datori e generare CU.
+          </div>
+        </ons-card>
+      </div>
+
+      <div id="colf-page" style="display:none;">
+        <ons-card>
+          <div class="card-header"><h3 class="card-title">Registrazione Colf</h3></div>
+          <div class="card-body">
+            <form>
+              <ons-input placeholder="Nome" float style="margin-top:8px;"></ons-input>
+              <ons-input placeholder="Cognome" float style="margin-top:8px;"></ons-input>
+              <ons-input placeholder="Codice Fiscale" float style="margin-top:8px;"></ons-input>
+              <ons-input placeholder="Telefono" float style="margin-top:8px;"></ons-input>
+              <div style="margin-top:16px;"><ons-button modifier="large--cta">Salva</ons-button></div>
+            </form>
+          </div>
+        </ons-card>
+      </div>
+
+      <div id="datore-page" style="display:none;">
+        <ons-card>
+          <div class="card-header"><h3 class="card-title">Registrazione Datore</h3></div>
+          <div class="card-body">
+            <form>
+              <ons-input placeholder="Nome" float style="margin-top:8px;"></ons-input>
+              <ons-input placeholder="Cognome" float style="margin-top:8px;"></ons-input>
+              <ons-input placeholder="Codice Fiscale / P.IVA" float style="margin-top:8px;"></ons-input>
+              <ons-input placeholder="Indirizzo" float style="margin-top:8px;"></ons-input>
+              <div style="margin-top:16px;"><ons-button modifier="large--cta">Salva</ons-button></div>
+            </form>
+          </div>
+        </ons-card>
+      </div>
+
+      <div id="cu-page" style="display:none;">
+        <ons-card>
+          <div class="card-header"><h3 class="card-title">Generazione CU</h3></div>
+          <div class="card-body">
+            <form>
+              <ons-input placeholder="Anno" type="number" value="2024" float style="margin-top:8px;"></ons-input>
+              <ons-select style="margin-top:8px;"><option>Mario Rossi</option></ons-select>
+              <ons-select style="margin-top:8px;"><option>Giulia Bianchi</option></ons-select>
+              <ons-input placeholder="Compenso lordo" type="number" float style="margin-top:8px;"></ons-input>
+              <ons-input placeholder="Ritenute" type="number" float style="margin-top:8px;"></ons-input>
+              <div style="margin-top:16px;"><ons-button modifier="large--cta">Genera PDF</ons-button></div>
+            </form>
+          </div>
+        </ons-card>
+      </div>
+    </div>
+
+    <!-- Bottom toolbar with Home -->
+    <ons-bottom-toolbar>
+      <div class="center">
+        <ons-button id="home-btn" modifier="quiet">🏠 Home</ons-button>
+      </div>
+    </ons-bottom-toolbar>
+
   </ons-page>
 </template>
 
 <script>
 $(function() {
-  $('#login-btn').on('click', function() {
+  const navigator = document.getElementById('app-navigator');
+
+  // Push login page initially
+  navigator.pushPage('login-page');
+
+  // Use jQuery delegation for dynamically loaded content
+  $(document).on('click', '#login-btn', function() {
     const email = $('#login-email').val();
     const pass = $('#login-password').val();
     if(email === 'name@example.com' && pass === 'password') {
-      $('#login-page').hide();
-      $('#dashboard-tabbar').show();
+      navigator.pushPage('dashboard-page', {animation: 'fade'});
     } else {
       ons.notification.alert('Credenziali non valide');
     }
+  });
+
+  // Pill clicks
+  $(document).on('click', '#dashboard-pills .pill', function() {
+    const target = $(this).data('target');
+    $('#dashboard-content > div').hide();
+    $('#' + target).fadeIn(200);
+    $('#dashboard-pills .pill').removeClass('active');
+    $(this).addClass('active');
+  });
+
+  // Home button
+  $(document).on('click', '#home-btn', function() {
+    $('#dashboard-content > div').hide();
+    $('#home-page').fadeIn(200);
+    $('#dashboard-pills .pill').removeClass('active');
+    $('#dashboard-pills .pill[data-target="home-page"]').addClass('active');
   });
 });
 </script>
