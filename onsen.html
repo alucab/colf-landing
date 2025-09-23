@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Colf Manager - Onsen UI</title>
+  <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+  <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+</head>
+<body>
+
+<!-- Login Page -->
+<ons-page id="login-page">
+  <ons-toolbar>
+    <div class="center">Colf Manager</div>
+  </ons-toolbar>
+
+  <div style="padding: 16px;">
+    <ons-card>
+      <div style="text-align:center; margin-bottom:16px;">
+        <h2>Accedi</h2>
+      </div>
+
+      <ons-input id="login-email" modifier="underbar" placeholder="Email" type="email" float></ons-input>
+      <ons-input id="login-password" modifier="underbar" placeholder="Password" type="password" float style="margin-top:16px;"></ons-input>
+
+      <div style="margin-top:24px;">
+        <ons-button id="login-btn" modifier="large--cta">Login</ons-button>
+      </div>
+    </ons-card>
+  </div>
+</ons-page>
+
+<!-- Dashboard Tabbar -->
+<ons-tabbar id="dashboard-tabbar" position="bottom" style="display:none;">
+  <ons-tab label="🏠 Home" page="home.html" active icon="md-home"></ons-tab>
+  <ons-tab label="👩‍🦱 Colf" page="colf.html" icon="md-face"></ons-tab>
+  <ons-tab label="👤 Datore" page="datore.html" icon="md-person"></ons-tab>
+  <ons-tab label="📄 CU" page="cu.html" icon="md-document"></ons-tab>
+</ons-tabbar>
+
+<!-- Templates -->
+<template id="home.html">
+  <ons-page>
+    <ons-toolbar>
+      <div class="center">Home</div>
+    </ons-toolbar>
+    <ons-card style="margin:16px;">
+      <div class="card-header"><h3 class="card-title">Dashboard</h3></div>
+      <div class="card-body">
+        <p>Benvenuto 👋</p>
+        <p>Da qui puoi gestire colf, datori e generare CU.</p>
+      </div>
+    </ons-card>
+  </ons-page>
+</template>
+
+<template id="colf.html">
+  <ons-page>
+    <ons-toolbar>
+      <div class="center">Registrazione Colf</div>
+    </ons-toolbar>
+    <ons-card style="margin:16px;">
+      <form>
+        <ons-input placeholder="Nome" float style="margin-top:8px;"></ons-input>
+        <ons-input placeholder="Cognome" float style="margin-top:8px;"></ons-input>
+        <ons-input placeholder="Codice Fiscale" float style="margin-top:8px;"></ons-input>
+        <ons-input placeholder="Telefono" float style="margin-top:8px;"></ons-input>
+        <div style="margin-top:16px;">
+          <ons-button>Salva</ons-button>
+        </div>
+      </form>
+    </ons-card>
+  </ons-page>
+</template>
+
+<template id="datore.html">
+  <ons-page>
+    <ons-toolbar>
+      <div class="center">Registrazione Datore</div>
+    </ons-toolbar>
+    <ons-card style="margin:16px;">
+      <form>
+        <ons-input placeholder="Nome" float style="margin-top:8px;"></ons-input>
+        <ons-input placeholder="Cognome" float style="margin-top:8px;"></ons-input>
+        <ons-input placeholder="Codice Fiscale / P.IVA" float style="margin-top:8px;"></ons-input>
+        <ons-input placeholder="Indirizzo" float style="margin-top:8px;"></ons-input>
+        <div style="margin-top:16px;">
+          <ons-button>Salva</ons-button>
+        </div>
+      </form>
+    </ons-card>
+  </ons-page>
+</template>
+
+<template id="cu.html">
+  <ons-page>
+    <ons-toolbar>
+      <div class="center">Generazione CU</div>
+    </ons-toolbar>
+    <ons-card style="margin:16px;">
+      <form>
+        <ons-input placeholder="Anno" type="number" value="2024" float></ons-input>
+        <ons-select style="margin-top:8px;">
+          <option>Mario Rossi</option>
+        </ons-select>
+        <ons-select style="margin-top:8px;">
+          <option>Giulia Bianchi</option>
+        </ons-select>
+        <ons-input placeholder="Compenso lordo" type="number" float style="margin-top:8px;"></ons-input>
+        <ons-input placeholder="Ritenute" type="number" float style="margin-top:8px;"></ons-input>
+        <div style="margin-top:16px;">
+          <ons-button modifier="large--cta">Genera PDF</ons-button>
+        </div>
+      </form>
+    </ons-card>
+  </ons-page>
+</template>
+
+<script>
+$(function() {
+  $('#login-btn').on('click', function() {
+    const email = $('#login-email').val();
+    const pass = $('#login-password').val();
+    if(email === 'name@example.com' && pass === 'password') {
+      $('#login-page').hide();
+      $('#dashboard-tabbar').show();
+    } else {
+      ons.notification.alert('Credenziali non valide');
+    }
+  });
+});
+</script>
+</body>
+</html>
