@@ -3,43 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Colf Manager - Onsen UI Native</title>
+  <title>Colf Manager - Onsen UI Tappable List</title>
   <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
   <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
 
   <style>
-    /* Pills like native tabs */
-    #dashboard-pills {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      margin: 16px 0;
+    /* Forms responsive */
+    form ons-input, form ons-select {
+      display: block;
+      width: 100%;
+      margin-top: 8px;
     }
-    #dashboard-pills .pill {
-      flex: 1 1 30%;
-      margin: 4px;
-      padding: 10px 20px;
-      border-radius: 20px;
-      background-color: #206bc4;
-      color: white;
-      font-weight: 500;
-      text-align: center;
-      cursor: pointer;
-      transition: 0.2s all;
-    }
-    #dashboard-pills .pill.active {
-      background-color: #104a8a;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
+    #dashboard-content > div { padding: 0 16px 16px 16px; }
   </style>
 </head>
 <body>
 
 <ons-navigator id="app-navigator" swipeable></ons-navigator>
 
-<!-- Login Page Template -->
+<!-- Templates -->
+
 <template id="login-page">
   <ons-page>
     <ons-toolbar>
@@ -57,28 +42,28 @@
   </ons-page>
 </template>
 
-<!-- Dashboard Page Template -->
 <template id="dashboard-page">
   <ons-page>
     <ons-toolbar>
       <div class="center">Dashboard</div>
     </ons-toolbar>
 
-    <!-- Pills -->
-    <div id="dashboard-pills">
-      <div class="pill active" data-target="home-page">🏠 Home</div>
-      <div class="pill" data-target="colf-page">👩‍🦱 Colf</div>
-      <div class="pill" data-target="datore-page">👤 Datore</div>
-      <div class="pill" data-target="cu-page">📄 CU</div>
-    </div>
+    <!-- Tappable List Navigation -->
+    <ons-list>
+      <ons-list-header>Sezioni</ons-list-header>
+      <ons-list-item tappable data-target="home-page">🏠 Home</ons-list-item>
+      <ons-list-item tappable data-target="colf-page">👩‍🦱 Colf</ons-list-item>
+      <ons-list-item tappable data-target="datore-page">👤 Datore</ons-list-item>
+      <ons-list-item tappable data-target="cu-page">📄 CU</ons-list-item>
+    </ons-list>
 
+    <!-- Dashboard Content -->
     <div id="dashboard-content">
       <div id="home-page">
         <ons-card>
           <div class="card-header"><h3 class="card-title">Home</h3></div>
           <div class="card-body">
-            Benvenuto 👋<br>
-            Da qui puoi gestire colf, datori e generare CU.
+            Benvenuto 👋<br>Da qui puoi gestire colf, datori e generare CU.
           </div>
         </ons-card>
       </div>
@@ -88,10 +73,10 @@
           <div class="card-header"><h3 class="card-title">Registrazione Colf</h3></div>
           <div class="card-body">
             <form>
-              <ons-input placeholder="Nome" float style="margin-top:8px;"></ons-input>
-              <ons-input placeholder="Cognome" float style="margin-top:8px;"></ons-input>
-              <ons-input placeholder="Codice Fiscale" float style="margin-top:8px;"></ons-input>
-              <ons-input placeholder="Telefono" float style="margin-top:8px;"></ons-input>
+              <ons-input placeholder="Nome" float></ons-input>
+              <ons-input placeholder="Cognome" float></ons-input>
+              <ons-input placeholder="Codice Fiscale" float></ons-input>
+              <ons-input placeholder="Telefono" float></ons-input>
               <div style="margin-top:16px;"><ons-button modifier="large--cta">Salva</ons-button></div>
             </form>
           </div>
@@ -103,10 +88,10 @@
           <div class="card-header"><h3 class="card-title">Registrazione Datore</h3></div>
           <div class="card-body">
             <form>
-              <ons-input placeholder="Nome" float style="margin-top:8px;"></ons-input>
-              <ons-input placeholder="Cognome" float style="margin-top:8px;"></ons-input>
-              <ons-input placeholder="Codice Fiscale / P.IVA" float style="margin-top:8px;"></ons-input>
-              <ons-input placeholder="Indirizzo" float style="margin-top:8px;"></ons-input>
+              <ons-input placeholder="Nome" float></ons-input>
+              <ons-input placeholder="Cognome" float></ons-input>
+              <ons-input placeholder="Codice Fiscale / P.IVA" float></ons-input>
+              <ons-input placeholder="Indirizzo" float></ons-input>
               <div style="margin-top:16px;"><ons-button modifier="large--cta">Salva</ons-button></div>
             </form>
           </div>
@@ -118,7 +103,7 @@
           <div class="card-header"><h3 class="card-title">Generazione CU</h3></div>
           <div class="card-body">
             <form>
-              <ons-input placeholder="Anno" type="number" value="2024" float style="margin-top:8px;"></ons-input>
+              <ons-input placeholder="Anno" type="number" value="2024" float></ons-input>
               <ons-select style="margin-top:8px;"><option>Mario Rossi</option></ons-select>
               <ons-select style="margin-top:8px;"><option>Giulia Bianchi</option></ons-select>
               <ons-input placeholder="Compenso lordo" type="number" float style="margin-top:8px;"></ons-input>
@@ -130,7 +115,7 @@
       </div>
     </div>
 
-    <!-- Bottom toolbar with Home -->
+    <!-- Bottom Home Button -->
     <ons-bottom-toolbar>
       <div class="center">
         <ons-button id="home-btn" modifier="quiet">🏠 Home</ons-button>
@@ -147,7 +132,7 @@ $(function() {
   // Push login page initially
   navigator.pushPage('login-page');
 
-  // Use jQuery delegation for dynamically loaded content
+  // Login
   $(document).on('click', '#login-btn', function() {
     const email = $('#login-email').val();
     const pass = $('#login-password').val();
@@ -158,23 +143,22 @@ $(function() {
     }
   });
 
-  // Pill clicks
-  $(document).on('click', '#dashboard-pills .pill', function() {
+  // Tappable list navigation
+  $(document).on('click', 'ons-list-item[tappable]', function() {
     const target = $(this).data('target');
-    $('#dashboard-content > div').hide();
-    $('#' + target).fadeIn(200);
-    $('#dashboard-pills .pill').removeClass('active');
-    $(this).addClass('active');
+    $('#dashboard-content > div:visible').fadeOut(200, function() {
+      $('#' + target).fadeIn(200);
+    });
   });
 
   // Home button
   $(document).on('click', '#home-btn', function() {
-    $('#dashboard-content > div').hide();
-    $('#home-page').fadeIn(200);
-    $('#dashboard-pills .pill').removeClass('active');
-    $('#dashboard-pills .pill[data-target="home-page"]').addClass('active');
+    $('#dashboard-content > div:visible').fadeOut(200, function() {
+      $('#home-page').fadeIn(200);
+    });
   });
 });
 </script>
+
 </body>
 </html>
