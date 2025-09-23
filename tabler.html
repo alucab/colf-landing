@@ -1,163 +1,219 @@
 <!doctype html>
-<html lang="it">
+<html lang="en">
   <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-    <title>Colf Manager - Tabler Demo</title>
-
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Colf Manager Demo - Tabler</title>
     <!-- Tabler CSS -->
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler-flags.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler-payments.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler-vendors.min.css" rel="stylesheet"/>
   </head>
-  <body class="antialiased">
+  <body>
+    <div class="page">
+      <!-- Navbar -->
+      <header class="navbar navbar-expand-md navbar-light d-print-none">
+        <div class="container-xl">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <h1 class="navbar-brand">Colf Manager</h1>
+        </div>
+      </header>
 
-    <!-- Sidebar -->
-    <aside class="navbar navbar-vertical navbar-expand-lg navbar-dark bg-primary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-          <span class="navbar-brand-text">Colf Manager</span>
-        </a>
-        <div class="collapse navbar-collapse">
-          <ul class="navbar-nav pt-lg-3">
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span class="nav-link-title">Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span class="nav-link-title">Colf</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span class="nav-link-title">Datori</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span class="nav-link-title">Certificazione Unica</span>
-              </a>
-            </li>
-          </ul>
+      <!-- Sidebar -->
+      <div class="navbar-expand-md">
+        <div class="collapse navbar-collapse" id="navbar-menu">
+          <div class="navbar navbar-light">
+            <div class="container-xl">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link active" data-bs-toggle="tab" href="#dashboard">
+                    <span class="nav-link-icon"><i class="ti ti-home"></i></span>
+                    <span class="nav-link-title">Dashboard</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-bs-toggle="tab" href="#colf">
+                    <span class="nav-link-icon"><i class="ti ti-user"></i></span>
+                    <span class="nav-link-title">Registrazione Colf</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-bs-toggle="tab" href="#datore">
+                    <span class="nav-link-icon"><i class="ti ti-users"></i></span>
+                    <span class="nav-link-title">Datore di lavoro</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-bs-toggle="tab" href="#cu">
+                    <span class="nav-link-icon"><i class="ti ti-file-text"></i></span>
+                    <span class="nav-link-title">Certificazione Unica</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
-    </aside>
 
-    <!-- Page -->
-    <div class="page">
+      <!-- Page Content -->
       <div class="page-wrapper">
+        <div class="container-xl">
+          <div class="tab-content">
 
-        <!-- DASHBOARD -->
-        <div class="page-header d-print-none">
-          <div class="container-xl">
-            <h2 class="page-title">Dashboard</h2>
+            <!-- Dashboard -->
+            <div class="tab-pane fade show active" id="dashboard">
+              <div class="page-header d-print-none">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h2 class="page-title">Dashboard</h2>
+                  </div>
+                </div>
+              </div>
+              <div class="row row-deck row-cards">
+                <div class="col-sm-6 col-lg-3">
+                  <div class="card card-sm">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center">
+                        <span class="bg-primary text-white avatar me-3"><i class="ti ti-users"></i></span>
+                        <div>
+                          <div class="font-weight-medium">5 Colf</div>
+                          <div class="text-muted">registrati</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="card card-sm">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center">
+                        <span class="bg-green text-white avatar me-3"><i class="ti ti-briefcase"></i></span>
+                        <div>
+                          <div class="font-weight-medium">3 Datori</div>
+                          <div class="text-muted">attivi</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="card card-sm">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center">
+                        <span class="bg-yellow text-white avatar me-3"><i class="ti ti-file-text"></i></span>
+                        <div>
+                          <div class="font-weight-medium">2 CU</div>
+                          <div class="text-muted">generate</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Colf Form -->
+            <div class="tab-pane fade" id="colf">
+              <div class="page-header">
+                <h2 class="page-title">Registrazione Colf</h2>
+              </div>
+              <form class="card card-body">
+                <div class="mb-3">
+                  <label class="form-label">Nome e Cognome</label>
+                  <input type="text" class="form-control" placeholder="Mario Rossi">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Codice Fiscale</label>
+                  <input type="text" class="form-control" placeholder="RSSMRA80A01H501Z">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Data di nascita</label>
+                  <input type="date" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Indirizzo</label>
+                  <input type="text" class="form-control" placeholder="Via Roma 10, Milano">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Telefono</label>
+                  <input type="tel" class="form-control" placeholder="+39 333 1234567">
+                </div>
+                <button class="btn btn-primary">Salva</button>
+              </form>
+            </div>
+
+            <!-- Datore Form -->
+            <div class="tab-pane fade" id="datore">
+              <div class="page-header">
+                <h2 class="page-title">Registrazione Datore di lavoro</h2>
+              </div>
+              <form class="card card-body">
+                <div class="mb-3">
+                  <label class="form-label">Nome e Cognome</label>
+                  <input type="text" class="form-control" placeholder="Giuseppe Verdi">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Codice Fiscale</label>
+                  <input type="text" class="form-control" placeholder="VRDGPP70A01H501X">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Indirizzo</label>
+                  <input type="text" class="form-control" placeholder="Via Milano 5, Torino">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Telefono</label>
+                  <input type="tel" class="form-control" placeholder="+39 333 9876543">
+                </div>
+                <button class="btn btn-primary">Salva</button>
+              </form>
+            </div>
+
+            <!-- CU Form -->
+            <div class="tab-pane fade" id="cu">
+              <div class="page-header">
+                <h2 class="page-title">Generazione Certificazione Unica</h2>
+              </div>
+              <form class="card card-body">
+                <div class="mb-3">
+                  <label class="form-label">Anno di riferimento</label>
+                  <select class="form-select">
+                    <option>2025</option>
+                    <option>2024</option>
+                    <option>2023</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Colf</label>
+                  <select class="form-select">
+                    <option>Mario Rossi</option>
+                    <option>Anna Bianchi</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Datore di lavoro</label>
+                  <select class="form-select">
+                    <option>Giuseppe Verdi</option>
+                    <option>Lucia Neri</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Reddito Annuale (€)</label>
+                  <input type="number" class="form-control" placeholder="12000">
+                </div>
+                <button class="btn btn-success">Genera CU</button>
+              </form>
+            </div>
+
           </div>
         </div>
-        <div class="page-body">
-          <div class="container-xl">
-            <div class="row row-cards">
-              <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
-                  <div class="card-body">
-                    <div class="h1 mb-3">12</div>
-                    <div class="text-muted">Colf registrati</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
-                  <div class="card-body">
-                    <div class="h1 mb-3">5</div>
-                    <div class="text-muted">Datori attivi</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6 col-lg-3">
-                <div class="card card-sm">
-                  <div class="card-body">
-                    <div class="h1 mb-3">3</div>
-                    <div class="text-muted">CU da generare</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- FORM REGISTRAZIONE COLF -->
-            <div class="card mt-4">
-              <div class="card-header">
-                <h3 class="card-title">Registrazione Colf</h3>
-              </div>
-              <div class="card-body">
-                <form>
-                  <div class="mb-3">
-                    <label class="form-label">Nome</label>
-                    <input type="text" class="form-control" placeholder="Inserisci nome">
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Cognome</label>
-                    <input type="text" class="form-control" placeholder="Inserisci cognome">
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Codice Fiscale</label>
-                    <input type="text" class="form-control" placeholder="Codice Fiscale">
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Telefono</label>
-                    <input type="tel" class="form-control" placeholder="+39 ...">
-                  </div>
-                  <button type="submit" class="btn btn-primary w-100">Salva</button>
-                </form>
-              </div>
-            </div>
-
-            <!-- WIZARD CU -->
-            <div class="card mt-4">
-              <div class="card-header">
-                <h3 class="card-title">Genera Certificazione Unica</h3>
-              </div>
-              <div class="card-body">
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                  <li class="nav-item" role="presentation">
-                    <a class="nav-link active" data-bs-toggle="tab" href="#step1" role="tab">Dati Datore</a>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <a class="nav-link" data-bs-toggle="tab" href="#step2" role="tab">Dati Colf</a>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <a class="nav-link" data-bs-toggle="tab" href="#step3" role="tab">Retribuzioni</a>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <a class="nav-link" data-bs-toggle="tab" href="#step4" role="tab">Conferma</a>
-                  </li>
-                </ul>
-                <div class="tab-content pt-3">
-                  <div class="tab-pane fade show active" id="step1">
-                    <input type="text" class="form-control mb-2" placeholder="Codice Fiscale Datore">
-                  </div>
-                  <div class="tab-pane fade" id="step2">
-                    <input type="text" class="form-control mb-2" placeholder="Codice Fiscale Colf">
-                  </div>
-                  <div class="tab-pane fade" id="step3">
-                    <input type="number" class="form-control mb-2" placeholder="Retribuzione Annuale (€)">
-                  </div>
-                  <div class="tab-pane fade" id="step4">
-                    <p>Conferma i dati e genera la CU</p>
-                    <button class="btn btn-success w-100">Genera PDF</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
       </div>
     </div>
 
     <!-- Tabler JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/js/tabler.min.js"></script>
   </body>
 </html>
