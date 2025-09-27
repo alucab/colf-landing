@@ -175,50 +175,50 @@
     // ====== PocketBase sync (upsert single state record with file field) ======
     // Server collection name assumed: "states"
     // Schema expected: relation field "user" (relation to users) + file field "file"
-    async function syncToServer() {
-      setStatus("sync: starting...");
-      if (!pb.authStore.isValid) {
-        setStatus("sync: no auth");
-        return;
-      }
-      if (!navigator.onLine) {
-        setStatus("sync: offline");
-        return;
-      }
+async function syncToServer() {
+  setStatus("sync: starting...");
+  if (!pb.authStore.isValid) {
+    setStatus("sync: no auth");
+    return;
+  }
+  if (!navigator.onLine) {
+    setStatus("sync: offline");
+    return;
+  }
 
-      const userId = pb.authStore.model.id;
-      // load local state
-      const local = await loadLocalStateObj();
-      if (!local) {
-        setStatus("sync: no local state");
-        return;
-      }
+  const userId = pb.authStore.model.id;
+  const local = await loadLocalStateObj();
+  if (!local) {
+    setStatus("sync: no local state");
+    return;
+  }
 
-      try {
-        // check if server already has a record for this user
-        const list = await pb.collection("states").getFullList({ filter: `user="${userId}"` });
-        const jsonStr = JSON.stringify(local, null, 2);
-        const blob = new Blob([jsonStr], { type: "application/json" });
-        const file = new File([blob], `state-${userId}.json`, { type: "application/json" });
+  try {
+    // check if server already has a record for this user
+    const list = await pb.collection("states").getFullList({ filter: `user="${userId}"` });
+    const jsonStr = JSON.stringify(local, null, 2);
 
-        if (list.length > 0) {
-          // update the first existing record (we assume only one per user)
-          const rec = list[0];
-          // update with file upload; second arg is files mapping
-          await pb.collection("states").update(rec.id, { user: userId }, { file: file });
-          setStatus("sync: updated server record");
-        } else {
-          // create new record
-          await pb.collection("states").create({ user: userId }, { file: file });
-          setStatus("sync: created server record");
-        }
-        // refresh displayed server info
-        await fetchServerInfo();
-      } catch (err) {
-        console.error("sync error", err);
-        setStatus("sync: error - " + (err.message || err));
-      }
+    // crea FormData con i dati
+    const formData = new FormData();
+    formData.append("user", userId); // relation field
+    formData.append("file", new Blob([jsonStr], { type: "application/json" }), `state-${userId}.json`);
+
+    if (list.length > 0) {
+      const rec = list[0];
+      await pb.collection("states").update(rec.id, formData);
+      setStatus("sync: updated server record");
+    } else {
+      await pb.collection("states").create(formData);
+      setStatus("sync: created server record");
     }
+
+    await fetchServerInfo();
+  } catch (err) {
+    console.error("sync error", err);
+    setStatus("sync: error - " + (err.message || err));
+  }
+}
+
 
     // Fetch server info and show link (if record exists)
     async function fetchServerInfo() {
