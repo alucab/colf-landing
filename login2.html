@@ -168,9 +168,15 @@
       const list = await pb.collection("states").getFullList({ filter: `user="${userId}"` });
       const jsonStr = JSON.stringify(local, null, 2);
 
-      const formData = new FormData();
+      /*const formData = new FormData();
       formData.append("user", userId);
-      formData.append("file", new Blob([jsonStr], {type:"application/json"}), `state-${userId}.json`);
+      formData.append("file", new Blob([jsonStr], {type:"application/json"}), `state-${userId}.json`);*/
+      const binary = db.export();
+const blob = new Blob([binary], { type: "application/octet-stream" });
+
+const formData = new FormData();
+formData.append("user", userId);
+formData.append("file", blob, `state-${userId}.sqlite`);
 
       if (list.length > 0) {
         await pb.collection("states").update(list[0].id, formData);
