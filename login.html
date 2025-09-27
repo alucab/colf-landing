@@ -1,158 +1,348 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>ColfApp Backup PocketBase</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/onsenui/css/onsenui.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/onsenui/css/onsen-css-components.min.css">
+  <meta charset="utf-8" />
+  <title>ColfApp PocketBase + Dexie (Onsen + jQuery)</title>
+
+  <!-- Onsen UI -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/onsenui/css/onsenui.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/onsenui/css/onsen-css-components.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/onsenui/js/onsenui.min.js"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Dexie (IndexedDB helper) -->
+  <script src="https://cdn.jsdelivr.net/npm/dexie@3.2.2/dist/dexie.min.js"></script>
+
+  <!-- PocketBase JS (UMD) -->
+  <script src="https://cdn.jsdelivr.net/npm/pocketbase@0.17.1/dist/pocketbase.min.js"></script>
+
+  <style>
+    body { font-family: system-ui, Roboto, "Helvetica Neue", Arial; }
+    .pad { padding: 12px; }
+    .small { font-size: 0.9em; color: #666; }
+  </style>
 </head>
 <body>
-  <ons-page>
-    <ons-toolbar><div class="center">ColfApp PocketBase</div></ons-toolbar>
 
-    <ons-card>
-      <ons-input id="email" placeholder="Email" modifier="underbar"></ons-input>
-      <ons-input id="password" placeholder="Password" type="password" modifier="underbar"></ons-input>
-      <ons-button onclick="register()">Registrati</ons-button>
-      <ons-button onclick="login()">Login</ons-button>
-    </ons-card>
+  <!-- Onsen navigator: two pages (login & main) -->
+  <ons-navigator id="appNavigator" page="loginPage.html"></ons-navigator>
 
-    <ons-card>
-      <input type="file" id="fileInput">
-      <ons-button onclick="manualBackup()">Carica Backup Ora</ons-button>
-      <ons-button onclick="listFiles()">Mostra Backup</ons-button>
-      <ul id="fileList"></ul>
-    </ons-card>
+  <!-- loginPage.html -->
+  <template id="loginPage.html">
+    <ons-page>
+      <ons-toolbar><div class="center">ColfApp - Login</div></ons-toolbar>
 
-  </ons-page>
+      <div class="pad">
+        <ons-card>
+          <div class="pad">
+            <ons-input id="email" modifier="underbar" placeholder="Email"></ons-input>
+            <ons-input id="password" type="password" modifier="underbar" placeholder="Password"></ons-input>
+            <div style="margin-top:12px;">
+              <ons-button id="btnRegister">Registrati</ons-button>
+              <ons-button id="btnLogin">Login</ons-button>
+            </div>
+            <p class="small">Dopo il login verrai portato alla pagina principale dove si gestisce lo stato locale e la sincronizzazione.</p>
+          </div>
+        </ons-card>
+      </div>
+    </ons-page>
+  </template>
 
-<script type="module">
-import PocketBase from "https://cdn.jsdelivr.net/npm/pocketbase@0.17.1/dist/pocketbase.es.mjs";
+  <!-- mainPage.html -->
+  <template id="mainPage.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left">
+          <ons-back-button>Indietro</ons-back-button>
+        </div>
+        <div class="center">ColfApp - Stato</div>
+        <div class="right">
+          <ons-toolbar-button id="btnLogout">Logout</ons-toolbar-button>
+        </div>
+      </ons-toolbar>
 
-// PocketBase client
-const pb = new PocketBase("https://okcolf.pockethost.io");
+      <div class="pad">
+        <ons-card>
+          <div class="pad">
+            <h3>Stato locale (IndexedDB via Dexie)</h3>
+            <p id="localStatePretty">— ancora nessuno stato salvato —</p>
 
-// ===== IndexedDB helper =====
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open("ColfAppDB", 1);
-    request.onupgradeneeded = e => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains("state")) db.createObjectStore("state", { keyPath: "id" });
-      if (!db.objectStoreNames.contains("queue")) db.createObjectStore("queue", { autoIncrement: true });
+            <div style="margin-top:10px;">
+              <ons-button id="btnModify">Modifica stato (dati casuali)</ons-button>
+              <ons-button id="btnSaveLocal">Salva in IndexedDB</ons-button>
+              <ons-button id="btnSyncNow">Sincronizza ora (se online)</ons-button>
+            </div>
+
+            <p class="small" style="margin-top:10px;">Stato locale sovrascrive sempre il precedente. Se sei offline, lo stato resta locale e verrà sincronizzato appena torni online.</p>
+          </div>
+        </ons-card>
+
+        <ons-card>
+          <div class="pad">
+            <h4>Backup server</h4>
+            <p id="serverInfo">— nessun backup server trovato —</p>
+            <p class="small">Link al file backup (se presente):</p>
+            <div id="serverLinkContainer"></div>
+            <div style="margin-top:8px;">
+              <ons-button id="btnFetchServer">Controlla server</ons-button>
+            </div>
+          </div>
+        </ons-card>
+
+        <ons-card>
+          <div class="pad small">
+            <strong>Info sync</strong><br>
+            <span id="statusLine">Status: idle</span>
+          </div>
+        </ons-card>
+      </div>
+    </ons-page>
+  </template>
+
+
+  <script>
+  (function($){
+    // ====== Config PocketBase ======
+    const PB_URL = "https://okcolf.pockethost.io/"; // your provided URL
+    const pb = new PocketBase(PB_URL);
+
+    // ====== Dexie setup (single 'state' record) ======
+    const db = new Dexie("ColfAppDB");
+    db.version(1).stores({
+      state: "&id" // keyPath id (we'll use id = "state")
+    });
+
+    // Convenience wrappers
+    async function saveLocalStateObj(obj) {
+      await db.state.put({ id: "state", data: obj, updatedAt: Date.now() });
+    }
+    async function loadLocalStateObj() {
+      const rec = await db.state.get("state");
+      return rec ? rec.data : null;
+    }
+    async function deleteLocalState() {
+      await db.state.delete("state");
+    }
+
+    // ====== Fake person generator (randomized) ======
+    function randomInt(max){ return Math.floor(Math.random()*max); }
+    function makeRandomPerson() {
+      const names = ["Anna","Luca","Giulia","Marco","Francesca","Carlo","Sara","Davide"];
+      const surn = ["Rossi","Bianchi","Ferrari","Esposito","Russo","Romano"];
+      const cities = ["Milano","Roma","Torino","Napoli","Firenze"];
+      return {
+        name: names[randomInt(names.length)],
+        surname: surn[randomInt(surn.length)],
+        age: 20 + randomInt(50),
+        city: cities[randomInt(cities.length)],
+        hoursToday: (Math.random()*8).toFixed(2),
+        note: "fake data id:" + Date.now()
+      };
+    }
+
+    // ====== UI helpers ======
+    function setStatus(msg) { $("#statusLine").text("Status: " + msg); }
+    function showLocalStatePretty(obj) {
+      if(!obj) { $("#localStatePretty").text("— ancora nessuno stato salvato —"); return; }
+      $("#localStatePretty").text(JSON.stringify(obj, null, 2));
+    }
+    function showServerInfo(text, linkHtml) {
+      $("#serverInfo").text(text || "— nessun backup server trovato —");
+      $("#serverLinkContainer").html(linkHtml || "");
+    }
+
+    // ====== Current in-memory state (for modification) ======
+    let currentState = null;
+
+    // Load local state on startup
+    async function initLocalState() {
+      currentState = await loadLocalStateObj();
+      showLocalStatePretty(currentState);
+    }
+
+    // ====== Save local (Dexie) and update UI ======
+    async function saveLocalAndUI() {
+      if (!currentState) return;
+      await saveLocalStateObj(currentState);
+      showLocalStatePretty(currentState);
+      setStatus("stato salvato localmente");
+    }
+
+    // ====== PocketBase sync (upsert single state record with file field) ======
+    // Server collection name assumed: "states"
+    // Schema expected: relation field "user" (relation to users) + file field "file"
+    async function syncToServer() {
+      setStatus("sync: starting...");
+      if (!pb.authStore.isValid) {
+        setStatus("sync: no auth");
+        return;
+      }
+      if (!navigator.onLine) {
+        setStatus("sync: offline");
+        return;
+      }
+
+      const userId = pb.authStore.model.id;
+      // load local state
+      const local = await loadLocalStateObj();
+      if (!local) {
+        setStatus("sync: no local state");
+        return;
+      }
+
+      try {
+        // check if server already has a record for this user
+        const list = await pb.collection("states").getFullList({ filter: `user="${userId}"` });
+        const jsonStr = JSON.stringify(local, null, 2);
+        const blob = new Blob([jsonStr], { type: "application/json" });
+        const file = new File([blob], `state-${userId}.json`, { type: "application/json" });
+
+        if (list.length > 0) {
+          // update the first existing record (we assume only one per user)
+          const rec = list[0];
+          // update with file upload; second arg is files mapping
+          await pb.collection("states").update(rec.id, { user: userId }, { file: file });
+          setStatus("sync: updated server record");
+        } else {
+          // create new record
+          await pb.collection("states").create({ user: userId }, { file: file });
+          setStatus("sync: created server record");
+        }
+        // refresh displayed server info
+        await fetchServerInfo();
+      } catch (err) {
+        console.error("sync error", err);
+        setStatus("sync: error - " + (err.message || err));
+      }
+    }
+
+    // Fetch server info and show link (if record exists)
+    async function fetchServerInfo() {
+      if (!pb.authStore.isValid) { showServerInfo("non loggato"); return; }
+      try {
+        const userId = pb.authStore.model.id;
+        const list = await pb.collection("states").getFullList({ filter: `user="${userId}"` });
+        if (list.length === 0) {
+          showServerInfo("nessun backup server per questo utente", "");
+          return;
+        }
+        const rec = list[0];
+        const fileUrl = pb.getFileUrl(rec, "file");
+        showServerInfo(`record id: ${rec.id}`, `<a href="${fileUrl}" target="_blank">Scarica backup server</a>`);
+      } catch (err) {
+        console.error("fetchServerInfo error", err);
+        showServerInfo("errore fetching server info");
+      }
+    }
+
+    // ====== Up/Down: register/login/logout ======
+    async function doRegister(email, password) {
+      try {
+        await pb.collection("users").create({ email: email, password: password, passwordConfirm: password });
+        ons.notification.alert("Registrazione OK, ora fai login");
+      } catch (err) {
+        console.error(err);
+        ons.notification.alert("Errore registrazione: " + (err.message || JSON.stringify(err)));
+      }
+    }
+    async function doLogin(email, password) {
+      try {
+        await pb.collection("users").authWithPassword(email, password);
+        ons.notification.alert("Login OK");
+        // push main page
+        document.querySelector("#appNavigator").pushPage("mainPage.html");
+        // init main page state
+        await initLocalState();
+        await fetchServerInfo();
+      } catch (err) {
+        console.error(err);
+        ons.notification.alert("Errore login: " + (err.message || JSON.stringify(err)));
+      }
+    }
+    async function doLogout() {
+      pb.authStore.clear();
+      ons.notification.alert("Logout effettuato");
+      document.querySelector("#appNavigator").popPage();
+    }
+
+    // ====== Auto-sync behavior ======
+    // Try sync on interval and when online
+    let syncInterval = null;
+    function startAutoSync() {
+      if (syncInterval) clearInterval(syncInterval);
+      syncInterval = setInterval(() => {
+        if (navigator.onLine && pb.authStore.isValid) syncToServer();
+      }, 30_000); // every 30s for demo; in prod puoi allungare
+      // also sync when back online
+      window.addEventListener("online", () => {
+        if (pb.authStore.isValid) syncToServer();
+      });
+    }
+    function stopAutoSync() {
+      if (syncInterval) clearInterval(syncInterval);
+    }
+
+    // ====== Bind events (jQuery) after DOMReady ======
+    $(document).on("DOMContentLoaded", function(){
+      // register/login buttons live on login page
+      $(document).on("click", "#btnRegister", function(){
+        const email = $("#email").val();
+        const pwd = $("#password").val();
+        if (!email || !pwd) return ons.notification.alert("Inserisci email e password");
+        doRegister(email, pwd);
+      });
+      $(document).on("click", "#btnLogin", function(){
+        const email = $("#email").val();
+        const pwd = $("#password").val();
+        if (!email || !pwd) return ons.notification.alert("Inserisci email e password");
+        doLogin(email, pwd).then(() => {
+          startAutoSync();
+        });
+      });
+
+      // logout on main page
+      $(document).on("click", "#btnLogout", function(){ doLogout(); stopAutoSync(); });
+
+      // modify random data
+      $(document).on("click", "#btnModify", function(){
+        currentState = makeRandomPerson();
+        showLocalStatePretty(currentState);
+        setStatus("stato modificato in memoria");
+      });
+
+      // save local
+      $(document).on("click", "#btnSaveLocal", async function(){
+        if (!currentState) { return ons.notification.alert("Nessuno stato in memoria: premi 'Modifica' prima."); }
+        await saveLocalAndUI();
+      });
+
+      // sync now
+      $(document).on("click", "#btnSyncNow", async function(){
+        if (!pb.authStore.isValid) return ons.notification.alert("Devi essere loggato per sincronizzare");
+        await syncToServer();
+      });
+
+      // fetch server info
+      $(document).on("click", "#btnFetchServer", function(){ fetchServerInfo(); });
+
+      // When page pushed to mainPage, init local state + start autosync
+      document.querySelector('#appNavigator').addEventListener('postpush', (e) => {
+        if (e.enterPage && e.enterPage.id === "mainPage") {
+          initLocalState();
+          fetchServerInfo();
+          startAutoSync();
+        }
+      });
+    });
+
+    // Expose some helpers to console for debugging
+    window._colf = {
+      pb, db, saveLocalStateObj, loadLocalStateObj, syncToServer, fetchServerInfo
     };
-    request.onsuccess = e => resolve(e.target.result);
-    request.onerror = e => reject(e.target.error);
-  });
-}
 
-async function saveState(state) {
-  const db = await openDB();
-  const tx = db.transaction("state", "readwrite");
-  tx.objectStore("state").put({ id:"appState", data:state });
-  return tx.complete;
-}
-
-async function loadState() {
-  const db = await openDB();
-  return new Promise(resolve => {
-    const tx = db.transaction("state", "readonly");
-    const req = tx.objectStore("state").get("appState");
-    req.onsuccess = () => resolve(req.result?.data || {});
-  });
-}
-
-async function addToQueue(blob) {
-  const db = await openDB();
-  const tx = db.transaction("queue","readwrite");
-  tx.objectStore("queue").add(blob);
-  return tx.complete;
-}
-
-async function getQueue() {
-  const db = await openDB();
-  return new Promise(resolve => {
-    const tx = db.transaction("queue","readonly");
-    const req = tx.objectStore("queue").getAll();
-    req.onsuccess = () => resolve(req.result);
-  });
-}
-
-async function clearQueue() {
-  const db = await openDB();
-  const tx = db.transaction("queue","readwrite");
-  tx.objectStore("queue").clear();
-  return tx.complete;
-}
-
-async function exportStateToBlob() {
-  const state = await loadState();
-  return new Blob([JSON.stringify(state)], { type:"application/json" });
-}
-
-// ===== Auth =====
-window.register = async () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  try {
-    await pb.collection("users").create({ email, password, passwordConfirm: password });
-    alert("Registrazione effettuata!");
-  } catch(e){ alert(e.message); }
-};
-
-window.login = async () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  try {
-    await pb.collection("users").authWithPassword(email, password);
-    alert("Login effettuato!");
-  } catch(e){ alert(e.message); }
-};
-
-// ===== Backup =====
-async function uploadBackup(blob) {
-  if (!pb.authStore.isValid) return;
-  try {
-    const file = new File([blob], `backup-${Date.now()}.json`);
-    await pb.collection("backups").create({
-      user: pb.authStore.model.id
-    }, { file: file });
-    console.log("✅ Backup caricato");
-  } catch(e) {
-    console.log("Errore upload, aggiungo alla coda", e);
-    await addToQueue(blob);
-  }
-}
-
-async function autoBackup() {
-  const blob = await exportStateToBlob();
-  if (navigator.onLine) {
-    const queue = await getQueue();
-    for (const qBlob of queue) await uploadBackup(qBlob);
-    await clearQueue();
-    await uploadBackup(blob);
-  } else {
-    console.log("Offline, backup in coda");
-    await addToQueue(blob);
-  }
-}
-
-window.manualBackup = autoBackup;
-window.addEventListener("online", autoBackup);
-
-// ===== Lista backup =====
-window.listFiles = async () => {
-  if (!pb.authStore.isValid) return;
-  const records = await pb.collection("backups").getFullList(200, { filter: `user="${pb.authStore.model.id}"` });
-  const container = document.getElementById("fileList");
-  container.innerHTML = "";
-  for (const rec of records) {
-    const li = document.createElement("li");
-    li.innerHTML = `<a href="${pb.getFileUrl(rec, "file")}" target="_blank">${rec.file}</a>`;
-    container.appendChild(li);
-  }
-};
-</script>
+  })(jQuery);
+  </script>
 </body>
 </html>
