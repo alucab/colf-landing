@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>ColfApp PocketBase + SQL.js (Onsen + jQuery)</title>
+
+  <!-- Onsen UI -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/onsenui/css/onsenui.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/onsenui/css/onsen-css-components.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/onsenui/js/onsenui.min.js"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- sql.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+
+  <!-- PocketBase -->
+  <script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
+
+  <style>
+    body { font-family: system-ui, Roboto, "Helvetica Neue", Arial; }
+    .pad { padding: 12px; }
+    .small { font-size: 0.9em; color: #666; }
+    pre { white-space: pre-wrap; word-wrap: break-word; }
+  </style>
+</head>
+<body>
+
+  <ons-navigator id="appNavigator" page="loginPage.html"></ons-navigator>
+
+  <!-- loginPage.html -->
+  <template id="loginPage.html">
+    <ons-page>
+      <ons-toolbar><div class="center">ColfApp - Login</div></ons-toolbar>
+      <div class="pad">
+        <ons-card>
+          <div class="pad">
+            <ons-input id="email" modifier="underbar" placeholder="Email"></ons-input>
+            <ons-input id="password" type="password" modifier="underbar" placeholder="Password"></ons-input>
+            <div style="margin-top:12px;">
+              <ons-button id="btnRegister">Registrati</ons-button>
+              <ons-button id="btnLogin">Login</ons-button>
+            </div>
+            <p class="small">Dopo il login verrai portato alla pagina principale.</p>
+          </div>
+        </ons-card>
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- mainPage.html -->
+  <template id="mainPage.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left"><ons-back-button>Indietro</ons-back-button></div>
+        <div class="center">ColfApp - Stato</div>
+        <div class="right"><ons-toolbar-button id="btnLogout">Logout</ons-toolbar-button></div>
+      </ons-toolbar>
+
+      <div class="pad">
+        <ons-card>
+          <div class="pad">
+            <h3>Stato locale (SQLite via sql.js)</h3>
+            <pre id="localStatePretty">— ancora nessuno stato salvato —</pre>
+            <div style="margin-top:10px;">
+              <ons-button id="btnModify">Modifica stato (dati casuali)</ons-button>
+              <ons-button id="btnSaveLocal">Salva in SQLite</ons-button>
+              <ons-button id="btnSyncNow">Sincronizza ora</ons-button>
+            </div>
+          </div>
+        </ons-card>
+
+        <ons-card>
+          <div class="pad">
+            <h4>Backup server</h4>
+            <p id="serverInfo">— nessun backup server trovato —</p>
+            <div id="serverLinkContainer"></div>
+            <ons-button id="btnFetchServer" style="margin-top:8px;">Controlla server</ons-button>
+          </div>
+        </ons-card>
+
+        <ons-card>
+          <div class="pad small">
+            <strong>Info sync:</strong> <span id="statusLine">idle</span>
+          </div>
+        </ons-card>
+      </div>
+    </ons-page>
+  </template>
+
+<script>
+(async function($){
+  // ====== PocketBase ======
+  const PB_URL = "https://okcolf.pockethost.io/";
+  const pb = new PocketBase(PB_URL);
+
+  // ====== sql.js setup ======
+  const SQL = await initSqlJs({
+    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}`
+  });
+  let db;
+
+  function loadDB() {
+    const saved = localStorage.getItem("colfapp_db");
+    if (saved) {
+      db = new SQL.Database(Uint8Array.from(atob(saved), c => c.charCodeAt(0)));
+    } else {
+      db = new SQL.Database();
+      db.run("CREATE TABLE state (id INTEGER PRIMARY KEY, data TEXT)");
+    }
+  }
+
+  function saveDB() {
+    const binary = db.export();
+    const b64 = btoa(String.fromCharCode(...binary));
+    localStorage.setItem("colfapp_db", b64);
+  }
+
+  function saveLocalStateObj(obj) {
+    db.run("DELETE FROM state WHERE id=1");
+    const stmt = db.prepare("INSERT INTO state (id, data) VALUES (1, ?)");
+    stmt.run([JSON.stringify(obj)]);
+    stmt.free();
+    saveDB();
+  }
+
+  function loadLocalStateObj() {
+    const stmt = db.prepare("SELECT data FROM state WHERE id=1");
+    let row, result = null;
+    while (stmt.step()) row = stmt.getAsObject();
+    stmt.free();
+    if (row && row.data) result = JSON.parse(row.data);
+    return result;
+  }
+
+  // ====== Fake person ======
+  function randomInt(max){ return Math.floor(Math.random()*max); }
+  function makeRandomPerson() {
+    const names = ["Anna","Luca","Giulia","Marco"];
+    return { 
+      name: names[randomInt(names.length)],
+      age: 20 + randomInt(40),
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  // ====== UI helpers ======
+  function setStatus(msg){ $("#statusLine").text(msg); }
+  function showLocalStatePretty(obj){
+    $("#localStatePretty").text(obj ? JSON.stringify(obj,null,2) : "— ancora nessuno stato salvato —");
+  }
+  function showServerInfo(text, link){ 
+    $("#serverInfo").text(text||""); 
+    $("#serverLinkContainer").html(link||""); 
+  }
+
+  // ====== Sync to PocketBase ======
+  async function syncToServer() {
+    if (!pb.authStore.isValid) { setStatus("no auth"); return; }
+    if (!navigator.onLine) { setStatus("offline"); return; }
+
+    const userId = pb.authStore.model.id;
+    const local = loadLocalStateObj();
+    if (!local) { setStatus("no local state"); return; }
+
+    try {
+      const list = await pb.collection("states").getFullList({ filter: `user="${userId}"` });
+      const jsonStr = JSON.stringify(local, null, 2);
+
+      const formData = new FormData();
+      formData.append("user", userId);
+      formData.append("file", new Blob([jsonStr], {type:"application/json"}), `state-${userId}.json`);
+
+      if (list.length > 0) {
+        await pb.collection("states").update(list[0].id, formData);
+        setStatus("updated server record");
+      } else {
+        await pb.collection("states").create(formData);
+        setStatus("created server record");
+      }
+      await fetchServerInfo();
+    } catch (err) {
+      console.error("sync error", err);
+      setStatus("error: " + err.message);
+    }
+  }
+
+  async function fetchServerInfo() {
+    if (!pb.authStore.isValid) { showServerInfo("non loggato"); return; }
+    const userId = pb.authStore.model.id;
+    const list = await pb.collection("states").getFullList({ filter: `user="${userId}"` });
+    if (list.length === 0) { showServerInfo("nessun backup server"); return; }
+    const rec = list[0];
+    const url = pb.getFileUrl(rec, "file");
+    showServerInfo("record id: " + rec.id, `<a href="${url}" target="_blank">Scarica backup</a>`);
+  }
+
+  // ====== Auth ======
+  async function doRegister(email,pwd){
+    try {
+      await pb.collection("users").create({email:email,password:pwd,passwordConfirm:pwd});
+      ons.notification.alert("Registrato! Ora fai login.");
+    } catch(e){ ons.notification.alert("Errore: "+e.message); }
+  }
+  async function doLogin(email,pwd){
+    try {
+      await pb.collection("users").authWithPassword(email,pwd);
+      document.querySelector("#appNavigator").pushPage("mainPage.html");
+    } catch(e){ ons.notification.alert("Login errato: "+e.message); }
+  }
+  function doLogout(){
+    pb.authStore.clear();
+    document.querySelector("#appNavigator").popPage();
+  }
+
+  // ====== Eventi ======
+  $(document).on("click","#btnRegister",()=>doRegister($("#email").val(),$("#password").val()));
+  $(document).on("click","#btnLogin",()=>doLogin($("#email").val(),$("#password").val()));
+  $(document).on("click","#btnLogout",()=>doLogout());
+
+  $(document).on("click","#btnModify",()=>{
+    const st = makeRandomPerson();
+    showLocalStatePretty(st);
+    window._currentState = st;
+    setStatus("stato modificato in memoria");
+  });
+  $(document).on("click","#btnSaveLocal",()=>{
+    if(!window._currentState) return ons.notification.alert("Prima premi Modifica");
+    saveLocalStateObj(window._currentState);
+    setStatus("salvato localmente");
+    showLocalStatePretty(window._currentState);
+  });
+  $(document).on("click","#btnSyncNow",()=>syncToServer());
+  $(document).on("click","#btnFetchServer",()=>fetchServerInfo());
+
+  document.querySelector('#appNavigator').addEventListener('postpush',(e)=>{
+    if(e.enterPage.id==="mainPage"){
+      const st = loadLocalStateObj();
+      showLocalStatePretty(st);
+      fetchServerInfo();
+    }
+  });
+
+  // ====== Autosync ogni 30s ======
+  setInterval(()=>{ 
+    if(pb.authStore.isValid && navigator.onLine){ 
+      syncToServer(); 
+    }
+  }, 30000);
+
+  // ====== Sync su ritorno online ======
+  window.addEventListener("online", ()=>{ 
+    if(pb.authStore.isValid){ 
+      syncToServer(); 
+    }
+  });
+
+  // init DB
+  loadDB();
+
+})(jQuery);
+</script>
+</body>
+</html>
