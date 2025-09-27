@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Gestione Colf a Ore</title>
+  <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+  <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+  <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+</head>
+<body>
+  <ons-page>
+    <ons-toolbar>
+      <div class="center">Gestione Colf</div>
+    </ons-toolbar>
+
+    <ons-tabbar swipeable position="bottom">
+      <ons-tab label="Home" icon="md-home" page="home.html" active></ons-tab>
+      <ons-tab label="Datore" icon="md-account" page="datore.html"></ons-tab>
+      <ons-tab label="Collaboratore" icon="md-people" page="collaboratore.html"></ons-tab>
+      <ons-tab label="Calendario" icon="md-calendar" page="calendario.html"></ons-tab>
+      <ons-tab label="Busta Paga" icon="md-money" page="busta.html"></ons-tab>
+      <ons-tab label="CUA" icon="md-file" page="cua.html"></ons-tab>
+      <ons-tab label="Impostazioni" icon="md-settings" page="impostazioni.html"></ons-tab>
+    </ons-tabbar>
+  </ons-page>
+
+  <template id="home.html">
+    <ons-page>
+      <ons-card>
+        <div class="title">Benvenuto</div>
+        <div class="content">Riepilogo collaboratore e accesso rapido alle funzioni.</div>
+      </ons-card>
+    </ons-page>
+  </template>
+
+  <template id="datore.html">
+    <ons-page>
+      <ons-card>
+        <div class="title">Profilo Datore</div>
+        <div class="content">Inserisci/modifica dati anagrafici e fiscali.</div>
+      </ons-card>
+    </ons-page>
+  </template>
+
+  <template id="collaboratore.html">
+    <ons-page>
+      <ons-card>
+        <div class="title">Collaboratore</div>
+        <div class="content">Gestione dati collaboratore e modalità retribuzione.</div>
+      </ons-card>
+    </ons-page>
+  </template>
+
+  <template id="calendario.html">
+    <ons-page>
+      <ons-card>
+        <div class="title">Calendario</div>
+        <div class="content">Visualizza e inserisci ore lavorate.</div>
+      </ons-card>
+    </ons-page>
+  </template>
+
+  <template id="busta.html">
+    <ons-page>
+      <ons-card>
+        <div class="title">Busta Paga</div>
+        <div class="content">Calcola e genera PDF mensile.</div>
+      </ons-card>
+    </ons-page>
+  </template>
+
+  <template id="cua.html">
+    <ons-page>
+      <ons-card>
+        <div class="title">CUA Annuale</div>
+        <div class="content">Genera documento CUA per l’anno corrente.</div>
+      </ons-card>
+    </ons-page>
+  </template>
+
+  <template id="impostazioni.html">
+    <ons-page>
+      <ons-card>
+        <div class="title">Impostazioni</div>
+        <div class="content">Gestione abbonamento, privacy e reset dati.</div>
+      </ons-card>
+    </ons-page>
+  </template>
+</body>
+</html>
