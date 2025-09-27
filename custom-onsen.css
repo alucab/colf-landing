@@ -1,0 +1,85 @@
+
+/* Font and base styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9fb;
+  color: #333;
+  font-size: 16px;
+}
+
+/* Toolbar */
+.toolbar {
+  background-color: #e6f0fa;
+  color: #003366;
+  font-weight: bold;
+}
+
+/* Page titles */
+.page__title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #003366;
+  margin: 16px;
+}
+
+/* Buttons */
+.button {
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  border: none;
+}
+
+.button--outline {
+  background-color: white;
+  color: #007bff;
+  border: 2px solid #007bff;
+}
+
+.button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+}
+
+/* Input fields */
+.text-input {
+  font-size: 16px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* List items */
+.list__item {
+  font-size: 16px;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Cards and containers */
+.card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 16px;
+  margin: 12px;
+}
+
+/* Calendar and data blocks */
+.data-block {
+  background-color: #eef5ff;
+  border-left: 4px solid #007bff;
+  padding: 12px;
+  margin: 8px 0;
+}
+
+/* Footer */
+.footer {
+  background-color: #e6f0fa;
+  color: #003366;
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+}
